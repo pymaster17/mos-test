@@ -119,7 +119,7 @@ def generate_config_from_sets(sets_directory, output_file, test_type="SMOS"):
         "BeaqleServiceURL": "/web_service/beaqleJS_Service.php",
         "SupervisorContact": "365270117@qq.com",
         "RandomizeTestOrder": True,
-        "MaxTestsPerRun": -1,
+        "MaxTestsPerRun": 20,
         "RequireMaxRating": False,
         "AudioRoot": "",
         "Testsets": testsets
