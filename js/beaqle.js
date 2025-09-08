@@ -1170,34 +1170,51 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
     var referenceTranscribe = this.TestConfig.Testsets[TestIdx].transcribe;
 
     // 创建用于显示参考转录文本的表格行及单元格（新增代码）
-    var headRow = tab.insertRow(0);
-    var textCell = document.createElement('td');
-    textCell.colSpan = 4;  // 根据表格结构设置跨列数，与下面添加各元素的列数对应，可按需调整
-    textCell.innerHTML = referenceTranscribe;
-    headRow.appendChild(textCell);
+    if (referenceTranscribe && referenceTranscribe.trim() !== "") {
+        var headRow = tab.insertRow(-1);
+        var textCell = document.createElement('td');
+        textCell.colSpan = 4;  // 根据表格结构设置跨列数，与下面添加各元素的列数对应，可按需调整
+        textCell.innerHTML = referenceTranscribe;
+        headRow.appendChild(textCell);
+    }
 
     var fileID = "";
     var row = new Array();
     var cell = new Array();
 
-    // add reference
-    fileID = "Reference";
-    row = tab.insertRow(1);  // 将原来的 -1 修改为 1，因为前面新增了显示转录文本的行，避免覆盖，从第二行开始添加元素
-    cell[0] = row.insertCell(0);
-    cell[0].innerHTML = "<span class='testItem'>Reference</span>";
-    cell[1] = row.insertCell(1);
-    cell[1].innerHTML = '<button id="play' + fileID + 'Btn' +
-        '" class="playButton" rel="' + fileID + '">Play</button>';
-    cell[2] = row.insertCell(2);
-    cell[2].innerHTML = "<button class='stopButton'>Stop</button>";
-    cell[3] = row.insertCell(3);
-    cell[3].innerHTML = "<img id='ScaleImage' src='" + this.TestConfig.RateScalePng + "'/>";
+    // 检查是否存在参考音频
+    var hasReference = this.TestConfig.Testsets[TestIdx].Files.hasOwnProperty("Reference");
 
-    this.addAudio(TestIdx, fileID, fileID);
+    if (hasReference) {
+        // add reference
+        fileID = "Reference";
+        row = tab.insertRow(-1); 
+        cell[0] = row.insertCell(-1);
+        cell[0].innerHTML = "<span class='testItem'>Reference</span>";
+        cell[1] = row.insertCell(-1);
+        cell[1].innerHTML = '<button id="play' + fileID + 'Btn' +
+            '" class="playButton" rel="' + fileID + '">Play</button>';
+        cell[2] = row.insertCell(-1);
+        cell[2].innerHTML = "<button class='stopButton'>Stop</button>";
+        cell[3] = row.insertCell(-1);
+        cell[3].innerHTML = "<img id='ScaleImage' src='" + this.TestConfig.RateScalePng + "'/>";
 
-    // add spacing
-    row = tab.insertRow(2);  // 将原来的 -1 修改为 2，保持顺序依次添加，避免覆盖已有行
-    row.setAttribute("height", "5");
+        this.addAudio(TestIdx, fileID, fileID);
+
+        // add spacing
+        row = tab.insertRow(-1); 
+        row.setAttribute("height", "5");
+    } else {
+        // For MOS test: add scale image directly
+        var scaleRow = tab.insertRow(-1);
+        var scaleCell = scaleRow.insertCell(-1);
+        scaleCell.colSpan = 4;
+        scaleCell.innerHTML = "<img id='ScaleImage' src='" + this.TestConfig.RateScalePng + "' style='display: block; margin: 10px auto;'/>";
+        
+        row = tab.insertRow(-1);
+        row.setAttribute("height", "5");
+    }
+
 
     var rateMin = this.TestConfig.RateMinValue;
     var rateMax = this.TestConfig.RateMaxValue;
@@ -1205,21 +1222,25 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
     // add test items
     for (var i = 0; i < this.TestState.FileMappings[TestIdx].length; i++) {
         var fileID = this.TestState.FileMappings[TestIdx][i];
+        
+        // Skip adding the reference file again if it's in the mapping for some reason
+        if (fileID === "Reference") continue;
+
         var relID = "";
-        if (fileID === "Reference")
+        if (fileID === "Reference") // This case might be obsolete now but kept for safety
             relID = "HiddenRef";
         else
             relID = fileID;
 
-        row[i] = tab.insertRow(i + 3);  // 根据循环次数依次往后添加行，避免覆盖前面添加的行，索引从 3 开始，因为前面已有 2 行（显示转录文本行和参考音频行）
-        cell[0] = row[i].insertCell(0);
+        row[i] = tab.insertRow(-1);
+        cell[0] = row[i].insertCell(-1);
         cell[0].innerHTML = "<span class='testItem'>Test Item " + (i + 1) + "</span>";
-        cell[1] = row[i].insertCell(1);
+        cell[1] = row[i].insertCell(-1);
         cell[1].innerHTML = '<button id="play' + relID + 'Btn' +
             '" class="playButton" rel="' + relID + '">Play</button>';
-        cell[2] = row[i].insertCell(2);
+        cell[2] = row[i].insertCell(-1);
         cell[2].innerHTML = "<button class='stopButton'>Stop</button>";
-        cell[3] = row[i].insertCell(3);
+        cell[3] = row[i].insertCell(-1);
         var fileIDstr = "";
         if (this.TestConfig.ShowFileIDs) {
             fileIDstr = fileID;

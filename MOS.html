@@ -32,8 +32,7 @@
 
             // Uncomment one of the following lines to choose the desired test class
 
-            testHandle = new MosTest(TestConfig);    // <-- MOS test class
-            //testHandle = new MushraTest(TestConfig);    // <-- MUSHRA test class
+            testHandle = new MushraTest(TestConfig);    // <-- MUSHRA test class
             //testHandle = new AbxTest(TestConfig);     // <-- ABX test class
             //testHandle = new PrefTest(TestConfig);   // <--AB test class
             $('#Footer').prepend(testHandle.browserFeatureString() + '<br/>');
