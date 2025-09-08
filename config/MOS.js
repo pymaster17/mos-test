@@ -10,7 +10,7 @@ var TestConfig = {
   "ShowResults": true,
   "LoopByDefault": false,
   "EnableABLoop": true,
-  "EnableOnlineSubmission": false,
+  "EnableOnlineSubmission": true,
   "BeaqleServiceURL": "/web_service/beaqleJS_Service.php",
   "SupervisorContact": "liandong@mail.ioa.ac.cn",
   "RandomizeTestOrder": true,

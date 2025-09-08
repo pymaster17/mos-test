@@ -825,59 +825,76 @@ $.extend({ alert: function (message, title) {
     // submit test results to server
     ListeningTest.prototype.SubmitTestResults = function () {
 
+        // --- Google Form Details ---
+        var formId = "1FAIpQLSdi2BUZb7QL6oLE5BSRIhSsTBsM3vBQfZ_YI872XLwCqoCOzA";
+        var entryIDs = {
+            testId: "entry.1643315759",
+            fileName: "entry.679069562",
+            rating: "entry.1250999849",
+            userName: "entry.127255870",
+            timestamp: "entry.1823669561"
+        };
+        var formUrl = "https://docs.google.com/forms/d/e/" + formId + "/formResponse";
+        // -------------------------
+
         var UserObj = new Object();
         UserObj.UserName = $('#UserName').val();
-        UserObj.UserEmail = $('#UserEMail').val();
-        UserObj.UserComment = $('#UserComment').val();
+        UserObj.UserComment = $('#UserComment').val(); // This is collected but not submitted as there is no field in the form.
 
-        var EvalResults = this.TestState.EvalResults;        
-        EvalResults.push(UserObj)
-        
+        var EvalResults = this.TestState.EvalResults;
+        var submissionPromises = [];
         var testHandle = this;
-        $.ajax({
-                    type: "POST",
-                    timeout: 5000,
-                    url: testHandle.TestConfig.BeaqleServiceURL,
-                    data: {'testresults':JSON.stringify(EvalResults), 'username':UserObj.UserName},
-                    dataType: 'json'})
-            .done( function (response){
-                    if (response.error==false) {
-                        $('#SubmitBox').html("Your submission was successful.<br/><br/>");
-                        testHandle.TestState.TestIsRunning = 0;
-                    } else {
-                        $('#SubmitError').show();
-                        $('#SubmitError > #ErrorCode').html(response.message);
-                        $("#SubmitBox > .submitOnline").hide();
-                        if (testHandle.TestConfig.SupervisorContact) {
-                            $("#SubmitBox > .submitEmail").show();
-                            $(".supervisorEmail").html(testHandle.TestConfig.SupervisorContact);
-                        }
-                        if (testHandle.browserFeatures.webAPIs['Blob']) {
-                            $("#SubmitBox > .submitDownload").show();
-                        } else {
-                            $("#SubmitBox > .submitDownload").hide();
-                            $("#ResultsBox").show();
-                        }
-                        $('#SubmitData').button('option',{ icons: { primary: 'ui-icon-alert' }});
-                    }
-                })
-            .fail (function (xhr, ajaxOptions, thrownError){
-                    $('#SubmitError').show();
-                    $('#SubmitError > #ErrorCode').html(xhr.status);
-                    $("#SubmitBox > .submitOnline").hide();
-                    if (testHandle.TestConfig.SupervisorContact) {
-                        $("#SubmitBox > .submitEmail").show();
-                        $(".supervisorEmail").html(testHandle.TestConfig.SupervisorContact);
-                    }
-                    if (testHandle.browserFeatures.webAPIs['Blob']) {
-                        $("#SubmitBox > .submitDownload").show();
-                    } else {
-                        $("#SubmitBox > .submitDownload").hide();
-                        $("#ResultsBox").show();
-                    }
-                });
-        $('#BtnSubmitData').button('option',{ icons: { primary: 'load-indicator' }});
 
+        // Show a "submitting..." message
+        $('#BtnSubmitData').button('option', { icons: { primary: 'load-indicator' }, label: 'Submitting...' });
+        $('#SubmitError').hide();
+
+        var timestamp = new Date().toISOString();
+
+        // Iterate through each test set that was actually run
+        for (var i = 0; i < EvalResults.length; i++) {
+            var testResult = EvalResults[i];
+
+            // Check if the test was run and has ratings
+            if (testResult && testResult.rating) {
+                
+                // Iterate through each rating in the test set
+                for (var fileID in testResult.rating) {
+                    if (testResult.rating.hasOwnProperty(fileID)) {
+                        var formData = new FormData();
+                        formData.append(entryIDs.testId, testResult.TestID);
+                        formData.append(entryIDs.fileName, testResult.filename[fileID]);
+                        formData.append(entryIDs.rating, testResult.rating[fileID]);
+                        formData.append(entryIDs.userName, UserObj.UserName);
+                        formData.append(entryIDs.timestamp, timestamp);
+
+                        var promise = fetch(formUrl, {
+                            method: 'POST',
+                            body: formData,
+                            mode: 'no-cors' // 'no-cors' mode is needed for cross-origin requests to Google Forms
+                        });
+                        
+                        submissionPromises.push(promise);
+                    }
+                }
+            }
+        }
+
+        // Wait for all submissions to be sent
+        Promise.all(submissionPromises).then(function() {
+            // Success
+            $('#SubmitBox').html("Your submission was successful.<br/><br/>");
+            testHandle.TestState.TestIsRunning = 0;
+        }).catch(function(error) {
+            // Error
+            $('#SubmitError').show();
+            $('#SubmitError > #ErrorCode').html("An error occurred while submitting. Please download your results and send them manually.");
+            $('#BtnSubmitData').button('option', { icons: { primary: 'ui-icon-alert' }, label: 'Submit' });
+            if (testHandle.browserFeatures.webAPIs['Blob']) {
+                $("#SubmitBox > .submitDownload").show();
+            }
+            console.error('Google Form submission error:', error);
+        });
     }
 
     // ###################################################################
