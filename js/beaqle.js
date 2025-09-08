@@ -556,6 +556,9 @@ $.extend({ alert: function (message, title) {
             this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
         }
 
+        // Preload audio for the upcoming tests
+        this.preloadAllAudio();
+
         this.TestState.Ratings = Array(this.TestConfig.Testsets.length);
         this.TestState.Runtime = new Uint32Array(this.TestConfig.Testsets.length);
 //        this.TestState.Runtime.forEach(function(element, index, array){array[index] = 0});
@@ -565,6 +568,43 @@ $.extend({ alert: function (message, title) {
         this.TestState.CurrentTest = 0;
     	this.runTest(this.TestState.TestSequence[this.TestState.CurrentTest]);
     }
+
+    // ###################################################################
+    // Preload all audio files for the current test run
+    ListeningTest.prototype.preloadAllAudio = function() {
+        console.log("Preloading audio for all tests in this run...");
+        var testHandle = this;
+        // Create a hidden div for preloading, if it doesn't exist
+        if ($('#PreloadAudioPool').length === 0) {
+            $('<div id="PreloadAudioPool" style="display: none;"></div>').appendTo('body');
+        }
+
+        // Iterate over the sequence of tests for this run
+        this.TestState.TestSequence.forEach(function(testIdx) {
+            var testset = testHandle.TestConfig.Testsets[testIdx];
+            if (testset && testset.Files) {
+                // Iterate over the files in the test set
+                for (var fileID in testset.Files) {
+                    if (testset.Files.hasOwnProperty(fileID)) {
+                        var path = testHandle.TestConfig.AudioRoot + testset.Files[fileID];
+                        
+                        // Use a unique ID to avoid adding the same element twice
+                        var preloadId = 'preload_' + testIdx + '_' + fileID;
+                        if ($('#' + preloadId).length === 0) {
+                            var audiotag = document.createElement("audio");
+                            audiotag.setAttribute('id', preloadId);
+                            audiotag.setAttribute('src', path);
+                            audiotag.setAttribute('preload', 'auto');
+                            
+                            // Add it to the hidden div to trigger download
+                            $('#PreloadAudioPool').append(audiotag);
+                        }
+                    }
+                }
+            }
+        });
+        console.log("Preloading initiated for " + this.TestState.TestSequence.length + " tests.");
+    };
 
     // ###################################################################
     ListeningTest.prototype.nextTest = function() {
