@@ -117,7 +117,7 @@ def generate_config_from_sets(sets_directory, output_file, test_type="SMOS"):
         "EnableABLoop": True,
         "EnableOnlineSubmission": False,
         "BeaqleServiceURL": "/web_service/beaqleJS_Service.php",
-        "SupervisorContact": "liandong@mail.ioa.ac.cn",
+        "SupervisorContact": "365270117@qq.com",
         "RandomizeTestOrder": True,
         "MaxTestsPerRun": -1,
         "RequireMaxRating": False,

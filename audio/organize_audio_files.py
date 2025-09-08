@@ -1,93 +1,110 @@
 import os
 import shutil
+import wave
+import random
 from pathlib import Path
 
 
-def organize_audio_files(base_dir, output_dir):
+def get_wav_duration(file_path):
+    """获取wav文件的时长（秒）"""
+    try:
+        with wave.open(file_path, 'rb') as wf:
+            frames = wf.getnframes()
+            rate = wf.getframerate()
+            duration = frames / float(rate)
+            return duration
+    except Exception as e:
+        print(f"无法读取文件时长: {file_path}, 错误: {e}")
+        return 0
+
+def organize_audio_files(base_dir, output_dir, target_count, min_duration=2, max_duration=5):
     """
-    组织音频文件：重命名并分组到set文件夹中
+    组织音频文件：筛选时长，随机选择，并分组到set文件夹中
 
     Args:
-        base_dir (str): 包含四个音频文件夹的基目录
+        base_dir (str): 包含多个音频子文件夹的基目录
         output_dir (str): 输出目录，用于存放set文件夹
+        target_count (int): 希望最终生成的set文件夹数量
+        min_duration (float): 音频最小有效时长
+        max_duration (float): 音频最大有效时长
     """
-    # 定义四个文件夹名称
-    folders = ['gt', 'hifigan', 'SpikingVocos', 'vocos']
-
-    # 确保输出目录存在
+    # 确保输出目录存在，如果存在则清空
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
     os.makedirs(output_dir, exist_ok=True)
 
-    # 获取所有音频文件的基本名（不含扩展名）
-    audio_files = {}
+    # 1. 收集所有模型文件夹中的音频文件
+    model_folders = [d for d in os.listdir(base_dir) if os.path.isdir(os.path.join(base_dir, d))]
+    audio_files_by_basename = {}
 
-    # 首先收集所有文件夹中的音频文件
-    for folder in folders:
+    print("开始收集和筛选音频文件...")
+    for folder in model_folders:
         folder_path = os.path.join(base_dir, folder)
-        if not os.path.exists(folder_path):
-            print(f"警告: 文件夹不存在: {folder_path}")
-            continue
-
-        # 遍历文件夹中的文件
         for filename in os.listdir(folder_path):
-            file_path = os.path.join(folder_path, filename)
-            if os.path.isfile(file_path) and is_audio_file(filename):
-                # 获取文件名（不含扩展名）
-                name_without_ext = os.path.splitext(filename)[0]
+            if filename.lower().endswith('.wav'):
+                file_path = os.path.join(folder_path, filename)
+                duration = get_wav_duration(file_path)
 
-                # 添加到字典中
-                if name_without_ext not in audio_files:
-                    audio_files[name_without_ext] = {}
+                # 2. 筛选时长在2-5秒之间的文件
+                if min_duration <= duration <= max_duration:
+                    base_name = os.path.splitext(filename)[0]
+                    if base_name not in audio_files_by_basename:
+                        audio_files_by_basename[base_name] = {}
+                    audio_files_by_basename[base_name][folder] = file_path
+    
+    print(f"找到 {len(audio_files_by_basename)} 组符合时长条件的音频。")
 
-                audio_files[name_without_ext][folder] = file_path
+    # 过滤掉不完整的组（即并非在所有模型文件夹中都存在的文件）
+    complete_sets = {name: files for name, files in audio_files_by_basename.items() if len(files) == len(model_folders)}
+    
+    print(f"其中有 {len(complete_sets)} 组是完整的（在所有模型中都存在）。")
 
-    # 创建set文件夹并复制/重命名文件
-    set_counter = 1
-    for base_name, files in audio_files.items():
-        # 创建set文件夹
-        set_folder = os.path.join(output_dir, f"set{set_counter}")
+    # 3. 随机选择目标数量的文件
+    if len(complete_sets) < target_count:
+        print(f"警告: 完整的音频组数量 ({len(complete_sets)}) 少于目标数量 ({target_count})。将使用所有可用的完整组。")
+        target_count = len(complete_sets)
+
+    selected_basenames = random.sample(list(complete_sets.keys()), target_count)
+    print(f"已随机选择 {len(selected_basenames)} 组音频进行处理。")
+
+    # 4. 创建set文件夹并复制/重命名文件
+    for i, base_name in enumerate(selected_basenames, 1):
+        set_folder = os.path.join(output_dir, f"set{i}")
         os.makedirs(set_folder, exist_ok=True)
-
-        # 复制并重命名每个文件
-        for folder, src_path in files.items():
-            # 获取文件扩展名
-            ext = os.path.splitext(src_path)[1]
-
-            # 创建新文件名
-            new_filename = f"{base_name}_{folder}{ext}"
+        
+        files_to_copy = complete_sets[base_name]
+        for folder, src_path in files_to_copy.items():
+            # 为了与之前的配置文件格式保持兼容，我们重命名文件
+            # 如果是 'gt' 文件夹，则命名为 ..._gt.wav
+            # 其他文件夹，则命名为 ..._模型名.wav
+            suffix = folder if folder != 'gt' else 'gt'
+            new_filename = f"{base_name}_{suffix}.wav"
             dst_path = os.path.join(set_folder, new_filename)
-
-            # 复制文件
+            
             shutil.copy2(src_path, dst_path)
-            print(f"已复制: {os.path.basename(src_path)} -> {os.path.join(f'set{set_counter}', new_filename)}")
+            # print(f"已复制: {os.path.basename(src_path)} -> {os.path.join(f'set{i}', new_filename)}")
 
-        set_counter += 1
-
-        # 如果已经创建了50个set文件夹，就停止
-        if set_counter > 50:
-            break
-
-    print(f"\n完成! 已创建 {min(set_counter - 1, 50)} 个set文件夹在 {output_dir}")
-
-
-def is_audio_file(filename):
-    """检查文件是否为音频文件"""
-    audio_extensions = ['.wav', '.mp3', '.flac', '.aac', '.ogg', '.m4a', '.wave']
-    return any(filename.lower().endswith(ext) for ext in audio_extensions)
+    print(f"\n完成! 已创建 {target_count} 个set文件夹在 {output_dir}")
 
 
 def main():
     # 设置基础目录和输出目录
-    base_dir = input("请输入包含四个音频文件夹的基目录路径: ").strip()
+    base_dir = input("请输入包含多个模型音频文件夹的基目录路径: ").strip()
     output_dir = input("请输入输出目录路径 (将在此创建set文件夹): ").strip()
+    try:
+        target_count = int(input("请输入希望随机选择的音频文件数量: ").strip())
+    except ValueError:
+        print("无效的数字，将使用默认值 50。")
+        target_count = 50
 
     # 如果用户没有输入，使用默认值
     if not base_dir:
-        base_dir = "D:/我的文档/Desktop/mos/audio/vocos_mos_test"
+        base_dir = "D:/Dataset/MOS-test"# 示例路径
     if not output_dir:
-        output_dir = "D:/我的文档/Desktop/mos/audio/vocos_mos_set"
+        output_dir = "D:/Projects/mos/audio/vocos_mos_set" # 示例路径
 
     # 执行组织操作
-    organize_audio_files(base_dir, output_dir)
+    organize_audio_files(base_dir, output_dir, target_count)
 
 
 if __name__ == "__main__":
