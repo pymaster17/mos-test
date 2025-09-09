@@ -887,106 +887,78 @@ $.extend({ alert: function (message, title) {
         // --- Google Form Details ---
         var formId = "1FAIpQLSdi2BUZb7QL6oLE5BSRIhSsTBsM3vBQfZ_YI872XLwCqoCOzA";
         var entryIDs = {
-            testId: "entry.1643315759",
-            fileName: "entry.679069562",
-            rating: "entry.1250999849",
             userName: "entry.127255870",
-            timestamp: "entry.1823669561"
+            results: "entry.1823669561"
         };
         var formUrl = "https://docs.google.com/forms/d/e/" + formId + "/formResponse";
         // -------------------------
 
         var UserObj = new Object();
         UserObj.UserName = $('#UserName').val();
-        UserObj.UserComment = $('#UserComment').val(); // This is collected but not submitted as there is no field in the form.
 
-        var EvalResults = this.TestState.EvalResults;
-        var submissionPromises = [];
+        // The EvalResults are populated by the formatResults function, which is called before this.
+        var resultsJsonString = JSON.stringify(this.TestState.EvalResults, null, 2);
+
         var testHandle = this;
 
         // Show a "submitting..." message
         $('#BtnSubmitData').button('option', { icons: { primary: 'load-indicator' }, label: 'Submitting...' });
         $('#SubmitError').hide();
 
-        var timestamp = new Date().toISOString();
-        var submissionCount = 0;
+        var promise = new Promise(function(resolve, reject) {
+            // Create a hidden iframe to be the target of the form submission
+            var iframeName = "hidden-iframe-single";
+            var iframe = document.createElement("iframe");
+            iframe.name = iframeName;
+            iframe.style.display = "none";
+            
+            // Create a form element
+            var form = document.createElement("form");
+            form.action = formUrl;
+            form.method = "POST";
+            form.target = iframeName;
+            form.style.display = "none";
 
-        // Iterate through each test set that was actually run
-        for (var i = 0; i < EvalResults.length; i++) {
-            var testResult = EvalResults[i];
-
-            // Check if the test was run and has ratings
-            if (testResult && testResult.rating) {
-                
-                // Iterate through each rating in the test set
-                for (var fileID in testResult.rating) {
-                    if (testResult.rating.hasOwnProperty(fileID)) {
-                        
-                        var promise = new Promise(function(resolve, reject) {
-                            submissionCount++;
-                            // Create a hidden iframe to be the target of the form submission
-                            var iframeName = "hidden-iframe-" + submissionCount;
-                            var iframe = document.createElement("iframe");
-                            iframe.name = iframeName;
-                            iframe.style.display = "none";
-                            
-                            // Create a form element
-                            var form = document.createElement("form");
-                            form.action = formUrl;
-                            form.method = "POST";
-                            form.target = iframeName;
-                            form.style.display = "none";
-
-                            // Function to create and append hidden input fields
-                            function addHiddenInput(key, value) {
-                                var input = document.createElement("input");
-                                input.type = "hidden";
-                                input.name = key;
-                                input.value = value;
-                                form.appendChild(input);
-                            }
-
-                            // Add data as hidden inputs
-                            addHiddenInput(entryIDs.testId, testResult.TestID);
-                            addHiddenInput(entryIDs.fileName, testResult.filename[fileID]);
-                            addHiddenInput(entryIDs.rating, testResult.rating[fileID]);
-                            addHiddenInput(entryIDs.userName, UserObj.UserName);
-                            addHiddenInput(entryIDs.timestamp, timestamp);
-                            
-                            document.body.appendChild(iframe);
-                            document.body.appendChild(form);
-
-                            var timeout = setTimeout(function() {
-                                document.body.removeChild(form);
-                                document.body.removeChild(iframe);
-                                reject(new Error('Submission timeout'));
-                            }, 5000); // 5 second timeout
-
-                            iframe.onload = function() {
-                                clearTimeout(timeout);
-                                console.log("Successfully submitted: " + testResult.filename[fileID]);
-                                document.body.removeChild(form);
-                                document.body.removeChild(iframe);
-                                resolve();
-                            };
-                            iframe.onerror = function() {
-                                clearTimeout(timeout);
-                                document.body.removeChild(form);
-                                document.body.removeChild(iframe);
-                                reject(new Error('Submission error'));
-                            };
-                            
-                            form.submit();
-                        });
-                        
-                        submissionPromises.push(promise);
-                    }
-                }
+            // Function to create and append hidden input fields
+            function addHiddenInput(key, value) {
+                var input = document.createElement("input");
+                input.type = "hidden";
+                input.name = key;
+                input.value = value;
+                form.appendChild(input);
             }
-        }
 
-        // Wait for all submissions to be sent
-        Promise.all(submissionPromises).then(function() {
+            // Add data as hidden inputs
+            addHiddenInput(entryIDs.userName, UserObj.UserName);
+            addHiddenInput(entryIDs.results, resultsJsonString);
+            
+            document.body.appendChild(iframe);
+            document.body.appendChild(form);
+
+            var timeout = setTimeout(function() {
+                document.body.removeChild(form);
+                document.body.removeChild(iframe);
+                reject(new Error('Submission timeout'));
+            }, 10000); // 10 second timeout
+
+            iframe.onload = function() {
+                clearTimeout(timeout);
+                console.log("Successfully submitted all results.");
+                document.body.removeChild(form);
+                document.body.removeChild(iframe);
+                resolve();
+            };
+            iframe.onerror = function() {
+                clearTimeout(timeout);
+                document.body.removeChild(form);
+                document.body.removeChild(iframe);
+                reject(new Error('Submission error'));
+            };
+            
+            form.submit();
+        });
+
+        promise.then(function() {
             // Success
             $('#SubmitBox').html("Your submission was successful.<br/><br/>");
             testHandle.TestState.TestIsRunning = 0;
