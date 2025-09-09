@@ -944,7 +944,16 @@ $.extend({ alert: function (message, title) {
                 var iframeName = "hidden-iframe-" + submissionCount;
                 var iframe = document.createElement("iframe");
                 iframe.name = iframeName;
-                iframe.style.display = "none";
+                // Make it visible for debugging
+                // iframe.style.display = "none"; 
+                iframe.style.position = 'fixed';
+                iframe.style.top = '10px';
+                iframe.style.left = '10px';
+                iframe.style.width = '80%';
+                iframe.style.height = '80%';
+                iframe.style.backgroundColor = 'white';
+                iframe.style.border = '2px solid black';
+                iframe.style.zIndex = '10000';
                 
                 var form = document.createElement("form");
                 form.action = formUrl;
@@ -978,9 +987,12 @@ $.extend({ alert: function (message, title) {
                 iframe.onload = function() {
                     clearTimeout(timeout);
                     console.log("Successfully submitted: " + data.fileName);
-                    document.body.removeChild(form);
-                    document.body.removeChild(iframe);
-                    resolve();
+                    // Keep iframe visible for 5 seconds for debugging
+                    setTimeout(function() {
+                        if (document.body.contains(form)) document.body.removeChild(form);
+                        if (document.body.contains(iframe)) document.body.removeChild(iframe);
+                        resolve();
+                    }, 5000);
                 };
                 iframe.onerror = function() {
                     clearTimeout(timeout);
