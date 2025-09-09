@@ -25,7 +25,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set1/2277_149896_000006_000000_gt.wav",
         "1": "audio/vocos_mos_set/set1/2277_149896_000006_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set1/2277_149896_000006_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set1/2277_149896_000006_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set1/2277_149896_000006_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set1/2277_149896_000006_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -36,7 +37,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set2/2277_149896_000007_000003_gt.wav",
         "1": "audio/vocos_mos_set/set2/2277_149896_000007_000003_hifigan.wav",
         "2": "audio/vocos_mos_set/set2/2277_149896_000007_000003_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set2/2277_149896_000007_000003_vocos.wav"
+        "3": "audio/vocos_mos_set/set2/2277_149896_000007_000003_vocos.wav",
+        "4": "audio/vocos_mos_set/set2/2277_149896_000007_000003_gt.wav"
       },
       "transcribe": ""
     },
@@ -47,7 +49,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set3/2277_149896_000023_000001_gt.wav",
         "1": "audio/vocos_mos_set/set3/2277_149896_000023_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set3/2277_149896_000023_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set3/2277_149896_000023_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set3/2277_149896_000023_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set3/2277_149896_000023_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -58,7 +61,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set4/2277_149897_000022_000000_gt.wav",
         "1": "audio/vocos_mos_set/set4/2277_149897_000022_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set4/2277_149897_000022_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set4/2277_149897_000022_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set4/2277_149897_000022_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set4/2277_149897_000022_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -69,7 +73,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set5/3170_137482_000022_000000_gt.wav",
         "1": "audio/vocos_mos_set/set5/3170_137482_000022_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set5/3170_137482_000022_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set5/3170_137482_000022_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set5/3170_137482_000022_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set5/3170_137482_000022_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -80,7 +85,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set6/5895_34629_000046_000001_gt.wav",
         "1": "audio/vocos_mos_set/set6/5895_34629_000046_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set6/5895_34629_000046_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set6/5895_34629_000046_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set6/5895_34629_000046_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set6/5895_34629_000046_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -91,7 +97,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set7/5694_64029_000008_000000_gt.wav",
         "1": "audio/vocos_mos_set/set7/5694_64029_000008_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set7/5694_64029_000008_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set7/5694_64029_000008_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set7/5694_64029_000008_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set7/5694_64029_000008_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -102,7 +109,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set8/3170_137482_000013_000001_gt.wav",
         "1": "audio/vocos_mos_set/set8/3170_137482_000013_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set8/3170_137482_000013_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set8/3170_137482_000013_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set8/3170_137482_000013_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set8/3170_137482_000013_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -113,7 +121,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set9/5694_64038_000018_000000_gt.wav",
         "1": "audio/vocos_mos_set/set9/5694_64038_000018_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set9/5694_64038_000018_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set9/5694_64038_000018_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set9/5694_64038_000018_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set9/5694_64038_000018_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -124,7 +133,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set10/5694_64038_000004_000000_gt.wav",
         "1": "audio/vocos_mos_set/set10/5694_64038_000004_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set10/5694_64038_000004_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set10/5694_64038_000004_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set10/5694_64038_000004_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set10/5694_64038_000004_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -135,7 +145,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set11/5694_64029_000002_000000_gt.wav",
         "1": "audio/vocos_mos_set/set11/5694_64029_000002_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set11/5694_64029_000002_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set11/5694_64029_000002_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set11/5694_64029_000002_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set11/5694_64029_000002_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -146,7 +157,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set12/2277_149897_000030_000000_gt.wav",
         "1": "audio/vocos_mos_set/set12/2277_149897_000030_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set12/2277_149897_000030_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set12/2277_149897_000030_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set12/2277_149897_000030_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set12/2277_149897_000030_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -157,7 +169,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set13/1919_142785_000063_000000_gt.wav",
         "1": "audio/vocos_mos_set/set13/1919_142785_000063_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set13/1919_142785_000063_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set13/1919_142785_000063_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set13/1919_142785_000063_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set13/1919_142785_000063_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -168,7 +181,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set14/5895_34615_000019_000005_gt.wav",
         "1": "audio/vocos_mos_set/set14/5895_34615_000019_000005_hifigan.wav",
         "2": "audio/vocos_mos_set/set14/5895_34615_000019_000005_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set14/5895_34615_000019_000005_vocos.wav"
+        "3": "audio/vocos_mos_set/set14/5895_34615_000019_000005_vocos.wav",
+        "4": "audio/vocos_mos_set/set14/5895_34615_000019_000005_gt.wav"
       },
       "transcribe": ""
     },
@@ -179,7 +193,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set15/5694_64025_000022_000001_gt.wav",
         "1": "audio/vocos_mos_set/set15/5694_64025_000022_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set15/5694_64025_000022_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set15/5694_64025_000022_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set15/5694_64025_000022_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set15/5694_64025_000022_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -190,7 +205,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set16/5895_34622_000024_000000_gt.wav",
         "1": "audio/vocos_mos_set/set16/5895_34622_000024_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set16/5895_34622_000024_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set16/5895_34622_000024_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set16/5895_34622_000024_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set16/5895_34622_000024_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -201,7 +217,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set17/5895_34615_000013_000005_gt.wav",
         "1": "audio/vocos_mos_set/set17/5895_34615_000013_000005_hifigan.wav",
         "2": "audio/vocos_mos_set/set17/5895_34615_000013_000005_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set17/5895_34615_000013_000005_vocos.wav"
+        "3": "audio/vocos_mos_set/set17/5895_34615_000013_000005_vocos.wav",
+        "4": "audio/vocos_mos_set/set17/5895_34615_000013_000005_gt.wav"
       },
       "transcribe": ""
     },
@@ -212,7 +229,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set18/5895_34615_000027_000003_gt.wav",
         "1": "audio/vocos_mos_set/set18/5895_34615_000027_000003_hifigan.wav",
         "2": "audio/vocos_mos_set/set18/5895_34615_000027_000003_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set18/5895_34615_000027_000003_vocos.wav"
+        "3": "audio/vocos_mos_set/set18/5895_34615_000027_000003_vocos.wav",
+        "4": "audio/vocos_mos_set/set18/5895_34615_000027_000003_gt.wav"
       },
       "transcribe": ""
     },
@@ -223,7 +241,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set19/2277_149897_000031_000000_gt.wav",
         "1": "audio/vocos_mos_set/set19/2277_149897_000031_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set19/2277_149897_000031_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set19/2277_149897_000031_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set19/2277_149897_000031_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set19/2277_149897_000031_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -234,7 +253,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set20/5694_64025_000009_000009_gt.wav",
         "1": "audio/vocos_mos_set/set20/5694_64025_000009_000009_hifigan.wav",
         "2": "audio/vocos_mos_set/set20/5694_64025_000009_000009_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set20/5694_64025_000009_000009_vocos.wav"
+        "3": "audio/vocos_mos_set/set20/5694_64025_000009_000009_vocos.wav",
+        "4": "audio/vocos_mos_set/set20/5694_64025_000009_000009_gt.wav"
       },
       "transcribe": ""
     },
@@ -245,7 +265,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set21/3853_163249_000171_000000_gt.wav",
         "1": "audio/vocos_mos_set/set21/3853_163249_000171_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set21/3853_163249_000171_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set21/3853_163249_000171_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set21/3853_163249_000171_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set21/3853_163249_000171_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -256,7 +277,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set22/2277_149896_000025_000008_gt.wav",
         "1": "audio/vocos_mos_set/set22/2277_149896_000025_000008_hifigan.wav",
         "2": "audio/vocos_mos_set/set22/2277_149896_000025_000008_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set22/2277_149896_000025_000008_vocos.wav"
+        "3": "audio/vocos_mos_set/set22/2277_149896_000025_000008_vocos.wav",
+        "4": "audio/vocos_mos_set/set22/2277_149896_000025_000008_gt.wav"
       },
       "transcribe": ""
     },
@@ -267,7 +289,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set23/2277_149874_000026_000000_gt.wav",
         "1": "audio/vocos_mos_set/set23/2277_149874_000026_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set23/2277_149874_000026_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set23/2277_149874_000026_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set23/2277_149874_000026_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set23/2277_149874_000026_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -278,7 +301,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set24/6295_64301_000007_000000_gt.wav",
         "1": "audio/vocos_mos_set/set24/6295_64301_000007_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set24/6295_64301_000007_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set24/6295_64301_000007_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set24/6295_64301_000007_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set24/6295_64301_000007_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -289,7 +313,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set25/2277_149896_000009_000007_gt.wav",
         "1": "audio/vocos_mos_set/set25/2277_149896_000009_000007_hifigan.wav",
         "2": "audio/vocos_mos_set/set25/2277_149896_000009_000007_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set25/2277_149896_000009_000007_vocos.wav"
+        "3": "audio/vocos_mos_set/set25/2277_149896_000009_000007_vocos.wav",
+        "4": "audio/vocos_mos_set/set25/2277_149896_000009_000007_gt.wav"
       },
       "transcribe": ""
     },
@@ -300,7 +325,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set26/1919_142785_000085_000001_gt.wav",
         "1": "audio/vocos_mos_set/set26/1919_142785_000085_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set26/1919_142785_000085_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set26/1919_142785_000085_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set26/1919_142785_000085_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set26/1919_142785_000085_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -311,7 +337,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set27/3170_137482_000022_000002_gt.wav",
         "1": "audio/vocos_mos_set/set27/3170_137482_000022_000002_hifigan.wav",
         "2": "audio/vocos_mos_set/set27/3170_137482_000022_000002_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set27/3170_137482_000022_000002_vocos.wav"
+        "3": "audio/vocos_mos_set/set27/3170_137482_000022_000002_vocos.wav",
+        "4": "audio/vocos_mos_set/set27/3170_137482_000022_000002_gt.wav"
       },
       "transcribe": ""
     },
@@ -322,7 +349,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set28/2277_149874_000016_000000_gt.wav",
         "1": "audio/vocos_mos_set/set28/2277_149874_000016_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set28/2277_149874_000016_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set28/2277_149874_000016_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set28/2277_149874_000016_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set28/2277_149874_000016_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -333,7 +361,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set29/5895_34615_000025_000000_gt.wav",
         "1": "audio/vocos_mos_set/set29/5895_34615_000025_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set29/5895_34615_000025_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set29/5895_34615_000025_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set29/5895_34615_000025_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set29/5895_34615_000025_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -344,7 +373,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set30/2277_149897_000009_000000_gt.wav",
         "1": "audio/vocos_mos_set/set30/2277_149897_000009_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set30/2277_149897_000009_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set30/2277_149897_000009_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set30/2277_149897_000009_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set30/2277_149897_000009_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -355,7 +385,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set31/5895_34622_000014_000000_gt.wav",
         "1": "audio/vocos_mos_set/set31/5895_34622_000014_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set31/5895_34622_000014_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set31/5895_34622_000014_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set31/5895_34622_000014_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set31/5895_34622_000014_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -366,7 +397,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set32/5895_34629_000022_000001_gt.wav",
         "1": "audio/vocos_mos_set/set32/5895_34629_000022_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set32/5895_34629_000022_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set32/5895_34629_000022_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set32/5895_34629_000022_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set32/5895_34629_000022_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -377,7 +409,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set33/2277_149896_000007_000008_gt.wav",
         "1": "audio/vocos_mos_set/set33/2277_149896_000007_000008_hifigan.wav",
         "2": "audio/vocos_mos_set/set33/2277_149896_000007_000008_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set33/2277_149896_000007_000008_vocos.wav"
+        "3": "audio/vocos_mos_set/set33/2277_149896_000007_000008_vocos.wav",
+        "4": "audio/vocos_mos_set/set33/2277_149896_000007_000008_gt.wav"
       },
       "transcribe": ""
     },
@@ -388,7 +421,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set34/5694_64038_000024_000010_gt.wav",
         "1": "audio/vocos_mos_set/set34/5694_64038_000024_000010_hifigan.wav",
         "2": "audio/vocos_mos_set/set34/5694_64038_000024_000010_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set34/5694_64038_000024_000010_vocos.wav"
+        "3": "audio/vocos_mos_set/set34/5694_64038_000024_000010_vocos.wav",
+        "4": "audio/vocos_mos_set/set34/5694_64038_000024_000010_gt.wav"
       },
       "transcribe": ""
     },
@@ -399,7 +433,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set35/5895_34622_000018_000005_gt.wav",
         "1": "audio/vocos_mos_set/set35/5895_34622_000018_000005_hifigan.wav",
         "2": "audio/vocos_mos_set/set35/5895_34622_000018_000005_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set35/5895_34622_000018_000005_vocos.wav"
+        "3": "audio/vocos_mos_set/set35/5895_34622_000018_000005_vocos.wav",
+        "4": "audio/vocos_mos_set/set35/5895_34622_000018_000005_gt.wav"
       },
       "transcribe": ""
     },
@@ -410,7 +445,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set36/2277_149896_000018_000001_gt.wav",
         "1": "audio/vocos_mos_set/set36/2277_149896_000018_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set36/2277_149896_000018_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set36/2277_149896_000018_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set36/2277_149896_000018_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set36/2277_149896_000018_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -421,7 +457,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set37/1919_142785_000117_000000_gt.wav",
         "1": "audio/vocos_mos_set/set37/1919_142785_000117_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set37/1919_142785_000117_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set37/1919_142785_000117_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set37/1919_142785_000117_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set37/1919_142785_000117_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -432,7 +469,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set38/3170_137482_000067_000006_gt.wav",
         "1": "audio/vocos_mos_set/set38/3170_137482_000067_000006_hifigan.wav",
         "2": "audio/vocos_mos_set/set38/3170_137482_000067_000006_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set38/3170_137482_000067_000006_vocos.wav"
+        "3": "audio/vocos_mos_set/set38/3170_137482_000067_000006_vocos.wav",
+        "4": "audio/vocos_mos_set/set38/3170_137482_000067_000006_gt.wav"
       },
       "transcribe": ""
     },
@@ -443,7 +481,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set39/2277_149897_000040_000004_gt.wav",
         "1": "audio/vocos_mos_set/set39/2277_149897_000040_000004_hifigan.wav",
         "2": "audio/vocos_mos_set/set39/2277_149897_000040_000004_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set39/2277_149897_000040_000004_vocos.wav"
+        "3": "audio/vocos_mos_set/set39/2277_149897_000040_000004_vocos.wav",
+        "4": "audio/vocos_mos_set/set39/2277_149897_000040_000004_gt.wav"
       },
       "transcribe": ""
     },
@@ -454,7 +493,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set40/5895_34615_000022_000000_gt.wav",
         "1": "audio/vocos_mos_set/set40/5895_34615_000022_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set40/5895_34615_000022_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set40/5895_34615_000022_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set40/5895_34615_000022_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set40/5895_34615_000022_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -465,7 +505,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set41/5694_64029_000006_000000_gt.wav",
         "1": "audio/vocos_mos_set/set41/5694_64029_000006_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set41/5694_64029_000006_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set41/5694_64029_000006_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set41/5694_64029_000006_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set41/5694_64029_000006_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -476,7 +517,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set42/2277_149897_000005_000000_gt.wav",
         "1": "audio/vocos_mos_set/set42/2277_149897_000005_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set42/2277_149897_000005_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set42/2277_149897_000005_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set42/2277_149897_000005_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set42/2277_149897_000005_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -487,7 +529,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set43/1919_142785_000089_000002_gt.wav",
         "1": "audio/vocos_mos_set/set43/1919_142785_000089_000002_hifigan.wav",
         "2": "audio/vocos_mos_set/set43/1919_142785_000089_000002_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set43/1919_142785_000089_000002_vocos.wav"
+        "3": "audio/vocos_mos_set/set43/1919_142785_000089_000002_vocos.wav",
+        "4": "audio/vocos_mos_set/set43/1919_142785_000089_000002_gt.wav"
       },
       "transcribe": ""
     },
@@ -498,7 +541,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set44/5694_64025_000019_000000_gt.wav",
         "1": "audio/vocos_mos_set/set44/5694_64025_000019_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set44/5694_64025_000019_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set44/5694_64025_000019_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set44/5694_64025_000019_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set44/5694_64025_000019_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -509,7 +553,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set45/2277_149874_000005_000000_gt.wav",
         "1": "audio/vocos_mos_set/set45/2277_149874_000005_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set45/2277_149874_000005_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set45/2277_149874_000005_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set45/2277_149874_000005_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set45/2277_149874_000005_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -520,7 +565,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set46/5694_64038_000015_000004_gt.wav",
         "1": "audio/vocos_mos_set/set46/5694_64038_000015_000004_hifigan.wav",
         "2": "audio/vocos_mos_set/set46/5694_64038_000015_000004_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set46/5694_64038_000015_000004_vocos.wav"
+        "3": "audio/vocos_mos_set/set46/5694_64038_000015_000004_vocos.wav",
+        "4": "audio/vocos_mos_set/set46/5694_64038_000015_000004_gt.wav"
       },
       "transcribe": ""
     },
@@ -531,7 +577,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set47/5895_34622_000017_000000_gt.wav",
         "1": "audio/vocos_mos_set/set47/5895_34622_000017_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set47/5895_34622_000017_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set47/5895_34622_000017_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set47/5895_34622_000017_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set47/5895_34622_000017_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -542,7 +589,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set48/3170_137482_000018_000000_gt.wav",
         "1": "audio/vocos_mos_set/set48/3170_137482_000018_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set48/3170_137482_000018_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set48/3170_137482_000018_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set48/3170_137482_000018_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set48/3170_137482_000018_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -553,7 +601,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set49/5895_34629_000034_000000_gt.wav",
         "1": "audio/vocos_mos_set/set49/5895_34629_000034_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set49/5895_34629_000034_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set49/5895_34629_000034_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set49/5895_34629_000034_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set49/5895_34629_000034_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -564,7 +613,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set50/5694_64025_000007_000000_gt.wav",
         "1": "audio/vocos_mos_set/set50/5694_64025_000007_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set50/5694_64025_000007_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set50/5694_64025_000007_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set50/5694_64025_000007_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set50/5694_64025_000007_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -575,7 +625,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set51/5694_64038_000005_000000_gt.wav",
         "1": "audio/vocos_mos_set/set51/5694_64038_000005_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set51/5694_64038_000005_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set51/5694_64038_000005_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set51/5694_64038_000005_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set51/5694_64038_000005_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -586,7 +637,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set52/5694_64038_000017_000005_gt.wav",
         "1": "audio/vocos_mos_set/set52/5694_64038_000017_000005_hifigan.wav",
         "2": "audio/vocos_mos_set/set52/5694_64038_000017_000005_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set52/5694_64038_000017_000005_vocos.wav"
+        "3": "audio/vocos_mos_set/set52/5694_64038_000017_000005_vocos.wav",
+        "4": "audio/vocos_mos_set/set52/5694_64038_000017_000005_gt.wav"
       },
       "transcribe": ""
     },
@@ -597,7 +649,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set53/5694_64038_000015_000010_gt.wav",
         "1": "audio/vocos_mos_set/set53/5694_64038_000015_000010_hifigan.wav",
         "2": "audio/vocos_mos_set/set53/5694_64038_000015_000010_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set53/5694_64038_000015_000010_vocos.wav"
+        "3": "audio/vocos_mos_set/set53/5694_64038_000015_000010_vocos.wav",
+        "4": "audio/vocos_mos_set/set53/5694_64038_000015_000010_gt.wav"
       },
       "transcribe": ""
     },
@@ -608,7 +661,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set54/2277_149897_000020_000000_gt.wav",
         "1": "audio/vocos_mos_set/set54/2277_149897_000020_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set54/2277_149897_000020_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set54/2277_149897_000020_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set54/2277_149897_000020_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set54/2277_149897_000020_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -619,7 +673,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set55/2277_149896_000025_000002_gt.wav",
         "1": "audio/vocos_mos_set/set55/2277_149896_000025_000002_hifigan.wav",
         "2": "audio/vocos_mos_set/set55/2277_149896_000025_000002_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set55/2277_149896_000025_000002_vocos.wav"
+        "3": "audio/vocos_mos_set/set55/2277_149896_000025_000002_vocos.wav",
+        "4": "audio/vocos_mos_set/set55/2277_149896_000025_000002_gt.wav"
       },
       "transcribe": ""
     },
@@ -630,7 +685,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set56/5895_34615_000021_000001_gt.wav",
         "1": "audio/vocos_mos_set/set56/5895_34615_000021_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set56/5895_34615_000021_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set56/5895_34615_000021_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set56/5895_34615_000021_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set56/5895_34615_000021_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -641,7 +697,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set57/2277_149897_000037_000001_gt.wav",
         "1": "audio/vocos_mos_set/set57/2277_149897_000037_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set57/2277_149897_000037_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set57/2277_149897_000037_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set57/2277_149897_000037_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set57/2277_149897_000037_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -652,7 +709,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set58/1919_142785_000064_000001_gt.wav",
         "1": "audio/vocos_mos_set/set58/1919_142785_000064_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set58/1919_142785_000064_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set58/1919_142785_000064_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set58/1919_142785_000064_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set58/1919_142785_000064_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -663,7 +721,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set59/1919_142785_000048_000000_gt.wav",
         "1": "audio/vocos_mos_set/set59/1919_142785_000048_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set59/1919_142785_000048_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set59/1919_142785_000048_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set59/1919_142785_000048_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set59/1919_142785_000048_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -674,7 +733,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set60/5694_64038_000012_000000_gt.wav",
         "1": "audio/vocos_mos_set/set60/5694_64038_000012_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set60/5694_64038_000012_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set60/5694_64038_000012_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set60/5694_64038_000012_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set60/5694_64038_000012_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -685,7 +745,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set61/2277_149897_000020_000005_gt.wav",
         "1": "audio/vocos_mos_set/set61/2277_149897_000020_000005_hifigan.wav",
         "2": "audio/vocos_mos_set/set61/2277_149897_000020_000005_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set61/2277_149897_000020_000005_vocos.wav"
+        "3": "audio/vocos_mos_set/set61/2277_149897_000020_000005_vocos.wav",
+        "4": "audio/vocos_mos_set/set61/2277_149897_000020_000005_gt.wav"
       },
       "transcribe": ""
     },
@@ -696,7 +757,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set62/1919_142785_000031_000001_gt.wav",
         "1": "audio/vocos_mos_set/set62/1919_142785_000031_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set62/1919_142785_000031_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set62/1919_142785_000031_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set62/1919_142785_000031_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set62/1919_142785_000031_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -707,7 +769,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set63/5895_34615_000019_000006_gt.wav",
         "1": "audio/vocos_mos_set/set63/5895_34615_000019_000006_hifigan.wav",
         "2": "audio/vocos_mos_set/set63/5895_34615_000019_000006_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set63/5895_34615_000019_000006_vocos.wav"
+        "3": "audio/vocos_mos_set/set63/5895_34615_000019_000006_vocos.wav",
+        "4": "audio/vocos_mos_set/set63/5895_34615_000019_000006_gt.wav"
       },
       "transcribe": ""
     },
@@ -718,7 +781,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set64/5694_64038_000018_000001_gt.wav",
         "1": "audio/vocos_mos_set/set64/5694_64038_000018_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set64/5694_64038_000018_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set64/5694_64038_000018_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set64/5694_64038_000018_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set64/5694_64038_000018_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -729,7 +793,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set65/3853_163249_000107_000000_gt.wav",
         "1": "audio/vocos_mos_set/set65/3853_163249_000107_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set65/3853_163249_000107_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set65/3853_163249_000107_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set65/3853_163249_000107_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set65/3853_163249_000107_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -740,7 +805,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set66/5694_64029_000005_000003_gt.wav",
         "1": "audio/vocos_mos_set/set66/5694_64029_000005_000003_hifigan.wav",
         "2": "audio/vocos_mos_set/set66/5694_64029_000005_000003_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set66/5694_64029_000005_000003_vocos.wav"
+        "3": "audio/vocos_mos_set/set66/5694_64029_000005_000003_vocos.wav",
+        "4": "audio/vocos_mos_set/set66/5694_64029_000005_000003_gt.wav"
       },
       "transcribe": ""
     },
@@ -751,7 +817,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set67/5895_34615_000015_000001_gt.wav",
         "1": "audio/vocos_mos_set/set67/5895_34615_000015_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set67/5895_34615_000015_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set67/5895_34615_000015_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set67/5895_34615_000015_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set67/5895_34615_000015_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -762,7 +829,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set68/5694_64029_000004_000000_gt.wav",
         "1": "audio/vocos_mos_set/set68/5694_64029_000004_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set68/5694_64029_000004_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set68/5694_64029_000004_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set68/5694_64029_000004_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set68/5694_64029_000004_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -773,7 +841,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set69/5694_64029_000031_000003_gt.wav",
         "1": "audio/vocos_mos_set/set69/5694_64029_000031_000003_hifigan.wav",
         "2": "audio/vocos_mos_set/set69/5694_64029_000031_000003_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set69/5694_64029_000031_000003_vocos.wav"
+        "3": "audio/vocos_mos_set/set69/5694_64029_000031_000003_vocos.wav",
+        "4": "audio/vocos_mos_set/set69/5694_64029_000031_000003_gt.wav"
       },
       "transcribe": ""
     },
@@ -784,7 +853,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set70/3170_137482_000067_000000_gt.wav",
         "1": "audio/vocos_mos_set/set70/3170_137482_000067_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set70/3170_137482_000067_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set70/3170_137482_000067_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set70/3170_137482_000067_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set70/3170_137482_000067_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -795,7 +865,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set71/5694_64029_000028_000000_gt.wav",
         "1": "audio/vocos_mos_set/set71/5694_64029_000028_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set71/5694_64029_000028_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set71/5694_64029_000028_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set71/5694_64029_000028_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set71/5694_64029_000028_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -806,7 +877,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set72/5895_34622_000019_000000_gt.wav",
         "1": "audio/vocos_mos_set/set72/5895_34622_000019_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set72/5895_34622_000019_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set72/5895_34622_000019_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set72/5895_34622_000019_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set72/5895_34622_000019_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -817,7 +889,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set73/6295_64301_000007_000001_gt.wav",
         "1": "audio/vocos_mos_set/set73/6295_64301_000007_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set73/6295_64301_000007_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set73/6295_64301_000007_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set73/6295_64301_000007_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set73/6295_64301_000007_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -828,7 +901,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set74/5895_34622_000026_000004_gt.wav",
         "1": "audio/vocos_mos_set/set74/5895_34622_000026_000004_hifigan.wav",
         "2": "audio/vocos_mos_set/set74/5895_34622_000026_000004_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set74/5895_34622_000026_000004_vocos.wav"
+        "3": "audio/vocos_mos_set/set74/5895_34622_000026_000004_vocos.wav",
+        "4": "audio/vocos_mos_set/set74/5895_34622_000026_000004_gt.wav"
       },
       "transcribe": ""
     },
@@ -839,7 +913,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set75/5694_64029_000016_000002_gt.wav",
         "1": "audio/vocos_mos_set/set75/5694_64029_000016_000002_hifigan.wav",
         "2": "audio/vocos_mos_set/set75/5694_64029_000016_000002_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set75/5694_64029_000016_000002_vocos.wav"
+        "3": "audio/vocos_mos_set/set75/5694_64029_000016_000002_vocos.wav",
+        "4": "audio/vocos_mos_set/set75/5694_64029_000016_000002_gt.wav"
       },
       "transcribe": ""
     },
@@ -850,7 +925,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set76/2277_149896_000006_000001_gt.wav",
         "1": "audio/vocos_mos_set/set76/2277_149896_000006_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set76/2277_149896_000006_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set76/2277_149896_000006_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set76/2277_149896_000006_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set76/2277_149896_000006_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -861,7 +937,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set77/3853_163249_000112_000002_gt.wav",
         "1": "audio/vocos_mos_set/set77/3853_163249_000112_000002_hifigan.wav",
         "2": "audio/vocos_mos_set/set77/3853_163249_000112_000002_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set77/3853_163249_000112_000002_vocos.wav"
+        "3": "audio/vocos_mos_set/set77/3853_163249_000112_000002_vocos.wav",
+        "4": "audio/vocos_mos_set/set77/3853_163249_000112_000002_gt.wav"
       },
       "transcribe": ""
     },
@@ -872,7 +949,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set78/5895_34629_000006_000001_gt.wav",
         "1": "audio/vocos_mos_set/set78/5895_34629_000006_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set78/5895_34629_000006_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set78/5895_34629_000006_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set78/5895_34629_000006_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set78/5895_34629_000006_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -883,7 +961,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set79/5895_34615_000017_000003_gt.wav",
         "1": "audio/vocos_mos_set/set79/5895_34615_000017_000003_hifigan.wav",
         "2": "audio/vocos_mos_set/set79/5895_34615_000017_000003_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set79/5895_34615_000017_000003_vocos.wav"
+        "3": "audio/vocos_mos_set/set79/5895_34615_000017_000003_vocos.wav",
+        "4": "audio/vocos_mos_set/set79/5895_34615_000017_000003_gt.wav"
       },
       "transcribe": ""
     },
@@ -894,7 +973,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set80/2277_149897_000040_000001_gt.wav",
         "1": "audio/vocos_mos_set/set80/2277_149897_000040_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set80/2277_149897_000040_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set80/2277_149897_000040_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set80/2277_149897_000040_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set80/2277_149897_000040_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -905,7 +985,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set81/1462_170138_000023_000004_gt.wav",
         "1": "audio/vocos_mos_set/set81/1462_170138_000023_000004_hifigan.wav",
         "2": "audio/vocos_mos_set/set81/1462_170138_000023_000004_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set81/1462_170138_000023_000004_vocos.wav"
+        "3": "audio/vocos_mos_set/set81/1462_170138_000023_000004_vocos.wav",
+        "4": "audio/vocos_mos_set/set81/1462_170138_000023_000004_gt.wav"
       },
       "transcribe": ""
     },
@@ -916,7 +997,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set82/1919_142785_000135_000001_gt.wav",
         "1": "audio/vocos_mos_set/set82/1919_142785_000135_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set82/1919_142785_000135_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set82/1919_142785_000135_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set82/1919_142785_000135_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set82/1919_142785_000135_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -927,7 +1009,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set83/2277_149897_000037_000000_gt.wav",
         "1": "audio/vocos_mos_set/set83/2277_149897_000037_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set83/2277_149897_000037_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set83/2277_149897_000037_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set83/2277_149897_000037_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set83/2277_149897_000037_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -938,7 +1021,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set84/5694_64038_000015_000001_gt.wav",
         "1": "audio/vocos_mos_set/set84/5694_64038_000015_000001_hifigan.wav",
         "2": "audio/vocos_mos_set/set84/5694_64038_000015_000001_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set84/5694_64038_000015_000001_vocos.wav"
+        "3": "audio/vocos_mos_set/set84/5694_64038_000015_000001_vocos.wav",
+        "4": "audio/vocos_mos_set/set84/5694_64038_000015_000001_gt.wav"
       },
       "transcribe": ""
     },
@@ -949,7 +1033,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set85/5895_34615_000026_000002_gt.wav",
         "1": "audio/vocos_mos_set/set85/5895_34615_000026_000002_hifigan.wav",
         "2": "audio/vocos_mos_set/set85/5895_34615_000026_000002_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set85/5895_34615_000026_000002_vocos.wav"
+        "3": "audio/vocos_mos_set/set85/5895_34615_000026_000002_vocos.wav",
+        "4": "audio/vocos_mos_set/set85/5895_34615_000026_000002_gt.wav"
       },
       "transcribe": ""
     },
@@ -960,7 +1045,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set86/5694_64038_000015_000011_gt.wav",
         "1": "audio/vocos_mos_set/set86/5694_64038_000015_000011_hifigan.wav",
         "2": "audio/vocos_mos_set/set86/5694_64038_000015_000011_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set86/5694_64038_000015_000011_vocos.wav"
+        "3": "audio/vocos_mos_set/set86/5694_64038_000015_000011_vocos.wav",
+        "4": "audio/vocos_mos_set/set86/5694_64038_000015_000011_gt.wav"
       },
       "transcribe": ""
     },
@@ -971,7 +1057,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set87/5694_64038_000024_000025_gt.wav",
         "1": "audio/vocos_mos_set/set87/5694_64038_000024_000025_hifigan.wav",
         "2": "audio/vocos_mos_set/set87/5694_64038_000024_000025_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set87/5694_64038_000024_000025_vocos.wav"
+        "3": "audio/vocos_mos_set/set87/5694_64038_000024_000025_vocos.wav",
+        "4": "audio/vocos_mos_set/set87/5694_64038_000024_000025_gt.wav"
       },
       "transcribe": ""
     },
@@ -982,7 +1069,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set88/2277_149874_000030_000007_gt.wav",
         "1": "audio/vocos_mos_set/set88/2277_149874_000030_000007_hifigan.wav",
         "2": "audio/vocos_mos_set/set88/2277_149874_000030_000007_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set88/2277_149874_000030_000007_vocos.wav"
+        "3": "audio/vocos_mos_set/set88/2277_149874_000030_000007_vocos.wav",
+        "4": "audio/vocos_mos_set/set88/2277_149874_000030_000007_gt.wav"
       },
       "transcribe": ""
     },
@@ -993,7 +1081,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set89/5694_64029_000013_000000_gt.wav",
         "1": "audio/vocos_mos_set/set89/5694_64029_000013_000000_hifigan.wav",
         "2": "audio/vocos_mos_set/set89/5694_64029_000013_000000_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set89/5694_64029_000013_000000_vocos.wav"
+        "3": "audio/vocos_mos_set/set89/5694_64029_000013_000000_vocos.wav",
+        "4": "audio/vocos_mos_set/set89/5694_64029_000013_000000_gt.wav"
       },
       "transcribe": ""
     },
@@ -1004,7 +1093,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set90/2277_149896_000003_000006_gt.wav",
         "1": "audio/vocos_mos_set/set90/2277_149896_000003_000006_hifigan.wav",
         "2": "audio/vocos_mos_set/set90/2277_149896_000003_000006_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set90/2277_149896_000003_000006_vocos.wav"
+        "3": "audio/vocos_mos_set/set90/2277_149896_000003_000006_vocos.wav",
+        "4": "audio/vocos_mos_set/set90/2277_149896_000003_000006_gt.wav"
       },
       "transcribe": ""
     },
@@ -1015,7 +1105,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set91/5694_64038_000024_000015_gt.wav",
         "1": "audio/vocos_mos_set/set91/5694_64038_000024_000015_hifigan.wav",
         "2": "audio/vocos_mos_set/set91/5694_64038_000024_000015_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set91/5694_64038_000024_000015_vocos.wav"
+        "3": "audio/vocos_mos_set/set91/5694_64038_000024_000015_vocos.wav",
+        "4": "audio/vocos_mos_set/set91/5694_64038_000024_000015_gt.wav"
       },
       "transcribe": ""
     },
@@ -1026,7 +1117,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set92/5694_64029_000016_000005_gt.wav",
         "1": "audio/vocos_mos_set/set92/5694_64029_000016_000005_hifigan.wav",
         "2": "audio/vocos_mos_set/set92/5694_64029_000016_000005_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set92/5694_64029_000016_000005_vocos.wav"
+        "3": "audio/vocos_mos_set/set92/5694_64029_000016_000005_vocos.wav",
+        "4": "audio/vocos_mos_set/set92/5694_64029_000016_000005_gt.wav"
       },
       "transcribe": ""
     },
@@ -1037,7 +1129,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set93/5694_64038_000017_000003_gt.wav",
         "1": "audio/vocos_mos_set/set93/5694_64038_000017_000003_hifigan.wav",
         "2": "audio/vocos_mos_set/set93/5694_64038_000017_000003_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set93/5694_64038_000017_000003_vocos.wav"
+        "3": "audio/vocos_mos_set/set93/5694_64038_000017_000003_vocos.wav",
+        "4": "audio/vocos_mos_set/set93/5694_64038_000017_000003_gt.wav"
       },
       "transcribe": ""
     },
@@ -1048,7 +1141,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set94/5895_34615_000023_000004_gt.wav",
         "1": "audio/vocos_mos_set/set94/5895_34615_000023_000004_hifigan.wav",
         "2": "audio/vocos_mos_set/set94/5895_34615_000023_000004_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set94/5895_34615_000023_000004_vocos.wav"
+        "3": "audio/vocos_mos_set/set94/5895_34615_000023_000004_vocos.wav",
+        "4": "audio/vocos_mos_set/set94/5895_34615_000023_000004_gt.wav"
       },
       "transcribe": ""
     },
@@ -1059,7 +1153,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set95/5895_34622_000031_000002_gt.wav",
         "1": "audio/vocos_mos_set/set95/5895_34622_000031_000002_hifigan.wav",
         "2": "audio/vocos_mos_set/set95/5895_34622_000031_000002_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set95/5895_34622_000031_000002_vocos.wav"
+        "3": "audio/vocos_mos_set/set95/5895_34622_000031_000002_vocos.wav",
+        "4": "audio/vocos_mos_set/set95/5895_34622_000031_000002_gt.wav"
       },
       "transcribe": ""
     },
@@ -1070,7 +1165,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set96/5694_64029_000030_000006_gt.wav",
         "1": "audio/vocos_mos_set/set96/5694_64029_000030_000006_hifigan.wav",
         "2": "audio/vocos_mos_set/set96/5694_64029_000030_000006_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set96/5694_64029_000030_000006_vocos.wav"
+        "3": "audio/vocos_mos_set/set96/5694_64029_000030_000006_vocos.wav",
+        "4": "audio/vocos_mos_set/set96/5694_64029_000030_000006_gt.wav"
       },
       "transcribe": ""
     },
@@ -1081,7 +1177,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set97/5694_64029_000027_000004_gt.wav",
         "1": "audio/vocos_mos_set/set97/5694_64029_000027_000004_hifigan.wav",
         "2": "audio/vocos_mos_set/set97/5694_64029_000027_000004_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set97/5694_64029_000027_000004_vocos.wav"
+        "3": "audio/vocos_mos_set/set97/5694_64029_000027_000004_vocos.wav",
+        "4": "audio/vocos_mos_set/set97/5694_64029_000027_000004_gt.wav"
       },
       "transcribe": ""
     },
@@ -1092,7 +1189,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set98/2277_149897_000035_000004_gt.wav",
         "1": "audio/vocos_mos_set/set98/2277_149897_000035_000004_hifigan.wav",
         "2": "audio/vocos_mos_set/set98/2277_149897_000035_000004_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set98/2277_149897_000035_000004_vocos.wav"
+        "3": "audio/vocos_mos_set/set98/2277_149897_000035_000004_vocos.wav",
+        "4": "audio/vocos_mos_set/set98/2277_149897_000035_000004_gt.wav"
       },
       "transcribe": ""
     },
@@ -1103,7 +1201,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set99/5895_34615_000021_000002_gt.wav",
         "1": "audio/vocos_mos_set/set99/5895_34615_000021_000002_hifigan.wav",
         "2": "audio/vocos_mos_set/set99/5895_34615_000021_000002_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set99/5895_34615_000021_000002_vocos.wav"
+        "3": "audio/vocos_mos_set/set99/5895_34615_000021_000002_vocos.wav",
+        "4": "audio/vocos_mos_set/set99/5895_34615_000021_000002_gt.wav"
       },
       "transcribe": ""
     },
@@ -1114,7 +1213,8 @@ var TestConfig = {
         "Reference": "audio/vocos_mos_set/set100/2277_149897_000020_000008_gt.wav",
         "1": "audio/vocos_mos_set/set100/2277_149897_000020_000008_hifigan.wav",
         "2": "audio/vocos_mos_set/set100/2277_149897_000020_000008_SpikingVocos.wav",
-        "3": "audio/vocos_mos_set/set100/2277_149897_000020_000008_vocos.wav"
+        "3": "audio/vocos_mos_set/set100/2277_149897_000020_000008_vocos.wav",
+        "4": "audio/vocos_mos_set/set100/2277_149897_000020_000008_gt.wav"
       },
       "transcribe": ""
     }

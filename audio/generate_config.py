@@ -87,8 +87,8 @@ def generate_config_from_sets(sets_directory, output_file, test_type="SMOS"):
         files["2"] = spiking_path
         files["3"] = vocos_path
         
-        if test_type == "MOS":
-            files["4"] = gt_path
+        # For both MOS and SMOS, GT audio should be included in the test samples.
+        files["4"] = gt_path
 
         # 创建testset配置
         testset = {
@@ -115,7 +115,7 @@ def generate_config_from_sets(sets_directory, output_file, test_type="SMOS"):
         "ShowResults": True,
         "LoopByDefault": False,
         "EnableABLoop": True,
-        "EnableOnlineSubmission": False,
+        "EnableOnlineSubmission": True,
         "BeaqleServiceURL": "/web_service/beaqleJS_Service.php",
         "SupervisorContact": "365270117@qq.com",
         "RandomizeTestOrder": True,
