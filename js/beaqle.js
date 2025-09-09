@@ -885,11 +885,26 @@ $.extend({ alert: function (message, title) {
     ListeningTest.prototype.SubmitTestResults = function () {
 
         // --- Google Form Details ---
-        var formId = "1FAIpQLSdi2BUZb7QL6oLE5BSRIhSsTBsM3vBQfZ_YI872XLwCqoCOzA";
-        var entryIDs = {
-            userName: "entry.127255870",
-            results: "entry.1823669561"
-        };
+        var formId;
+        var entryIDs;
+
+        // Check which test is running based on the HTML file name
+        if (window.location.pathname.includes('SMOS.html')) {
+            // SMOS Test Form
+            formId = "1FAIpQLSfpkNHpEhaCrKo6HBHudx52Fn4m7-0l3AjSzG1s9ywAVl9EEg";
+            entryIDs = {
+                userName: "entry.908762789",
+                results: "entry.1174308381"
+            };
+        } else {
+            // MOS Test Form (default)
+            formId = "1FAIpQLSdi2BUZb7QL6oLE5BSRIhSsTBsM3vBQfZ_YI872XLwCqoCOzA";
+            entryIDs = {
+                userName: "entry.127255870",
+                results: "entry.1823669561"
+            };
+        }
+        
         var formUrl = "https://docs.google.com/forms/d/e/" + formId + "/formResponse";
         // -------------------------
 
