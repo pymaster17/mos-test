@@ -37,6 +37,14 @@
             //testHandle = new PrefTest(TestConfig);   // <--AB test class
             $('#Footer').prepend(testHandle.browserFeatureString() + '<br/>');
         };
+
+        function validateAndSubmit() {
+            if ($('#UserName').val().trim() === '') {
+                alert('Username is required! \n用户名是必填项！');
+                return false;
+            }
+            testHandle.SubmitTestResults();
+        }
     /* ]]> */
     </script>
    
@@ -76,7 +84,7 @@
             </ul>
         </div>
         <div style="text-align:left">
-            感谢您参加这项听力测试。该部分测试约花费您20-30分钟左右时间，请花时间并仔细为每一项打分.
+            感谢您参加这项听力测试。该部分测试约花费您10-20分钟左右时间，请花时间并仔细为每一项打分.
             <br />
             <br />
             测试须知:
@@ -114,8 +122,9 @@
             </div>
             <p class="submitOnline">
                 <!-- edit here if you want to change the information about online submission, e.g. add privacy policy information -->
-                Please submit the results to our server. Entering a name or email address is not mandatory
-                but it would help us to contact you if we have further questions. You can also leave a comment.
+                Please submit the results to our server. <span style="color:red">Entering a name is mandatory.</span> You can also leave a comment.
+                <br />
+                请将结果提交到我们的服务器。 <span style="color:red">用户名为必填项。</span> 您也可以留下评论。
             </p>
             <p class="submitDownload">
                 <!-- edit here if you want to change the information about online submission, e.g. add privacy policy information -->
@@ -123,12 +132,12 @@
                 but it would help us to contact you if we have further questions. You can also leave a comment.
             </p>
             <table border=0 style="margin-left: auto;margin-right: auto;">
-            <tr><td>Name:</td><td><input id="UserName" type="text" size="40" maxlength="40" /></td></tr>
+            <tr><td>Name:</td><td><input id="UserName" type="text" size="40" maxlength="40" /> 随便填一个你觉得不会和别人重复的名字</td></tr>
             <tr><td>Email:</td><td><input id="UserEMail" type="text" size="40" maxlength="40" /></td></tr>
             <tr><td></td><td><textarea id="UserComment" cols="40" rows="4">Your comment...</textarea></td></tr>
             </table>
             <br />
-            <button id="BtnSubmitData" class="submitOnline" onclick="testHandle.SubmitTestResults();">Submit</button>
+            <button id="BtnSubmitData" class="submitOnline" onclick="validateAndSubmit();">Submit</button>
             <button id="BtnDownloadData" class="submitDownload" onclick="testHandle.DownloadTestResults();">Download</button>
             <p class="submitEmail error">
                 <!-- edit here if you want to change the information about email submission, e.g. add privacy policy information -->
