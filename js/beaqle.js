@@ -909,9 +909,7 @@ $.extend({ alert: function (message, title) {
         $('#SubmitError').hide();
 
         var timestamp = new Date().toISOString();
-        
         var submissionCount = 0;
-        var failedSubmissions = 0;
 
         // Iterate through each test set that was actually run
         for (var i = 0; i < EvalResults.length; i++) {
@@ -923,38 +921,62 @@ $.extend({ alert: function (message, title) {
                 // Iterate through each rating in the test set
                 for (var fileID in testResult.rating) {
                     if (testResult.rating.hasOwnProperty(fileID)) {
-                        submissionCount++;
-                        var queryString = "?";
-                        queryString += encodeURIComponent(entryIDs.testId) + "=" + encodeURIComponent(testResult.TestID) + "&";
-                        queryString += encodeURIComponent(entryIDs.fileName) + "=" + encodeURIComponent(testResult.filename[fileID]) + "&";
-                        queryString += encodeURIComponent(entryIDs.rating) + "=" + encodeURIComponent(testResult.rating[fileID]) + "&";
-                        queryString += encodeURIComponent(entryIDs.userName) + "=" + encodeURIComponent(UserObj.UserName) + "&";
-                        queryString += encodeURIComponent(entryIDs.timestamp) + "=" + encodeURIComponent(timestamp);
-
-                        var iframe = document.createElement("iframe");
-                        iframe.name = "hidden-iframe-" + submissionCount;
-                        iframe.style.display = "none";
-                        document.body.appendChild(iframe);
                         
-                        // Set a timeout for each submission
                         var promise = new Promise(function(resolve, reject) {
+                            submissionCount++;
+                            // Create a hidden iframe to be the target of the form submission
+                            var iframeName = "hidden-iframe-" + submissionCount;
+                            var iframe = document.createElement("iframe");
+                            iframe.name = iframeName;
+                            iframe.style.display = "none";
+                            
+                            // Create a form element
+                            var form = document.createElement("form");
+                            form.action = formUrl;
+                            form.method = "POST";
+                            form.target = iframeName;
+                            form.style.display = "none";
+
+                            // Function to create and append hidden input fields
+                            function addHiddenInput(key, value) {
+                                var input = document.createElement("input");
+                                input.type = "hidden";
+                                input.name = key;
+                                input.value = value;
+                                form.appendChild(input);
+                            }
+
+                            // Add data as hidden inputs
+                            addHiddenInput(entryIDs.testId, testResult.TestID);
+                            addHiddenInput(entryIDs.fileName, testResult.filename[fileID]);
+                            addHiddenInput(entryIDs.rating, testResult.rating[fileID]);
+                            addHiddenInput(entryIDs.userName, UserObj.UserName);
+                            addHiddenInput(entryIDs.timestamp, timestamp);
+                            
+                            document.body.appendChild(iframe);
+                            document.body.appendChild(form);
+
                             var timeout = setTimeout(function() {
+                                document.body.removeChild(form);
+                                document.body.removeChild(iframe);
                                 reject(new Error('Submission timeout'));
                             }, 5000); // 5 second timeout
 
                             iframe.onload = function() {
                                 clearTimeout(timeout);
                                 console.log("Successfully submitted: " + testResult.filename[fileID]);
+                                document.body.removeChild(form);
                                 document.body.removeChild(iframe);
                                 resolve();
                             };
                             iframe.onerror = function() {
                                 clearTimeout(timeout);
+                                document.body.removeChild(form);
                                 document.body.removeChild(iframe);
                                 reject(new Error('Submission error'));
                             };
                             
-                            iframe.src = formUrl + queryString;
+                            form.submit();
                         });
                         
                         submissionPromises.push(promise);
