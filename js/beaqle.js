@@ -901,7 +901,6 @@ $.extend({ alert: function (message, title) {
         UserObj.UserComment = $('#UserComment').val(); // This is collected but not submitted as there is no field in the form.
 
         var EvalResults = this.TestState.EvalResults;
-        var submissionPromises = [];
         var testHandle = this;
 
         // Show a "submitting..." message
@@ -909,97 +908,106 @@ $.extend({ alert: function (message, title) {
         $('#SubmitError').hide();
 
         var timestamp = new Date().toISOString();
-        var submissionCount = 0;
-
-        // Iterate through each test set that was actually run
+        
+        var allSubmissionsData = [];
+        // Collect all submission data into an array
         for (var i = 0; i < EvalResults.length; i++) {
             var testResult = EvalResults[i];
-
-            // Check if the test was run and has ratings
             if (testResult && testResult.rating) {
-                
-                // Iterate through each rating in the test set
                 for (var fileID in testResult.rating) {
                     if (testResult.rating.hasOwnProperty(fileID)) {
-                        
-                        var promise = new Promise(function(resolve, reject) {
-                            submissionCount++;
-                            // Create a hidden iframe to be the target of the form submission
-                            var iframeName = "hidden-iframe-" + submissionCount;
-                            var iframe = document.createElement("iframe");
-                            iframe.name = iframeName;
-                            iframe.style.display = "none";
-                            
-                            // Create a form element
-                            var form = document.createElement("form");
-                            form.action = formUrl;
-                            form.method = "POST";
-                            form.target = iframeName;
-                            form.style.display = "none";
-
-                            // Function to create and append hidden input fields
-                            function addHiddenInput(key, value) {
-                                var input = document.createElement("input");
-                                input.type = "hidden";
-                                input.name = key;
-                                input.value = value;
-                                form.appendChild(input);
-                            }
-
-                            // Add data as hidden inputs
-                            addHiddenInput(entryIDs.testId, testResult.TestID);
-                            addHiddenInput(entryIDs.fileName, testResult.filename[fileID]);
-                            addHiddenInput(entryIDs.rating, testResult.rating[fileID]);
-                            addHiddenInput(entryIDs.userName, UserObj.UserName);
-                            addHiddenInput(entryIDs.timestamp, timestamp);
-                            
-                            document.body.appendChild(iframe);
-                            document.body.appendChild(form);
-
-                            var timeout = setTimeout(function() {
-                                document.body.removeChild(form);
-                                document.body.removeChild(iframe);
-                                reject(new Error('Submission timeout'));
-                            }, 5000); // 5 second timeout
-
-                            iframe.onload = function() {
-                                clearTimeout(timeout);
-                                console.log("Successfully submitted: " + testResult.filename[fileID]);
-                                document.body.removeChild(form);
-                                document.body.removeChild(iframe);
-                                resolve();
-                            };
-                            iframe.onerror = function() {
-                                clearTimeout(timeout);
-                                document.body.removeChild(form);
-                                document.body.removeChild(iframe);
-                                reject(new Error('Submission error'));
-                            };
-                            
-                            form.submit();
+                        allSubmissionsData.push({
+                            testId: testResult.TestID,
+                            fileName: testResult.filename[fileID],
+                            rating: testResult.rating[fileID],
+                            userName: UserObj.UserName,
+                            timestamp: timestamp
                         });
-                        
-                        submissionPromises.push(promise);
                     }
                 }
             }
         }
-
-        // Wait for all submissions to be sent
-        Promise.all(submissionPromises).then(function() {
-            // Success
-            $('#SubmitBox').html("Your submission was successful.<br/><br/>");
-            testHandle.TestState.TestIsRunning = 0;
-        }).catch(function(error) {
-            // Error
-            $('#SubmitError').show();
-            $('#SubmitError > #ErrorCode').html("An error occurred while submitting. Please download your results and send them manually.");
-            $('#BtnSubmitData').button('option', { icons: { primary: 'ui-icon-alert' }, label: 'Submit' });
-            if (testHandle.browserFeatures.webAPIs['Blob']) {
-                $("#SubmitBox > .submitDownload").show();
+        
+        var submissionIndex = 0;
+        
+        function submitNext() {
+            if (submissionIndex >= allSubmissionsData.length) {
+                // All submissions are successful
+                $('#SubmitBox').html("Your submission was successful.<br/><br/>");
+                testHandle.TestState.TestIsRunning = 0;
+                return;
             }
-            console.error('Google Form submission error:', error);
-        });
+
+            var data = allSubmissionsData[submissionIndex];
+            var submissionPromise = new Promise(function(resolve, reject) {
+                var submissionCount = submissionIndex + 1;
+                var iframeName = "hidden-iframe-" + submissionCount;
+                var iframe = document.createElement("iframe");
+                iframe.name = iframeName;
+                iframe.style.display = "none";
+                
+                var form = document.createElement("form");
+                form.action = formUrl;
+                form.method = "POST";
+                form.target = iframeName;
+                form.style.display = "none";
+
+                function addHiddenInput(key, value) {
+                    var input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = key;
+                    input.value = value;
+                    form.appendChild(input);
+                }
+
+                addHiddenInput(entryIDs.testId, data.testId);
+                addHiddenInput(entryIDs.fileName, data.fileName);
+                addHiddenInput(entryIDs.rating, data.rating);
+                addHiddenInput(entryIDs.userName, data.userName);
+                addHiddenInput(entryIDs.timestamp, data.timestamp);
+                
+                document.body.appendChild(iframe);
+                document.body.appendChild(form);
+
+                var timeout = setTimeout(function() {
+                    document.body.removeChild(form);
+                    document.body.removeChild(iframe);
+                    reject(new Error('Submission timeout for ' + data.fileName));
+                }, 10000); // Increased timeout to 10 seconds
+
+                iframe.onload = function() {
+                    clearTimeout(timeout);
+                    console.log("Successfully submitted: " + data.fileName);
+                    document.body.removeChild(form);
+                    document.body.removeChild(iframe);
+                    resolve();
+                };
+                iframe.onerror = function() {
+                    clearTimeout(timeout);
+                    document.body.removeChild(form);
+                    document.body.removeChild(iframe);
+                    reject(new Error('Submission error for ' + data.fileName));
+                };
+                
+                form.submit();
+            });
+
+            submissionPromise.then(function() {
+                submissionIndex++;
+                submitNext(); // Submit the next one
+            }).catch(function(error) {
+                // Error on one submission
+                $('#SubmitError').show();
+                $('#SubmitError > #ErrorCode').html("An error occurred while submitting. Please download your results and send them manually.");
+                $('#BtnSubmitData').button('option', { icons: { primary: 'ui-icon-alert' }, label: 'Submit' });
+                if (testHandle.browserFeatures.webAPIs['Blob']) {
+                    $("#SubmitBox > .submitDownload").show();
+                }
+                console.error('Google Form submission error:', error);
+            });
+        }
+        
+        submitNext(); // Start the submission chain
     }
 
     // ###################################################################
