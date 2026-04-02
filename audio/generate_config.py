@@ -3,7 +3,15 @@ import json
 from pathlib import Path
 
 
-def generate_config_from_sets(sets_directory, output_file, test_type="SMOS", model_a_name=None, model_b_name=None, audio_root=""):
+def generate_config_from_sets(
+    sets_directory,
+    output_file,
+    test_type="SMOS",
+    model_a_name=None,
+    model_b_name=None,
+    audio_root="",
+    submission_url="/web_service/beaqleJS_Service.php",
+):
     """
     根据set文件夹生成BeaqleJS配置文件中的Testsets部分
 
@@ -170,7 +178,7 @@ def generate_config_from_sets(sets_directory, output_file, test_type="SMOS", mod
         "LoopByDefault": False,
         "EnableABLoop": True,
         "EnableOnlineSubmission": True,
-        "BeaqleServiceURL": "/web_service/beaqleJS_Service.php",
+        "BeaqleServiceURL": submission_url,
         "SupervisorContact": "365270117@qq.com",
         "RandomizeTestOrder": True,
         "MaxTestsPerRun": 20,
@@ -213,15 +221,28 @@ def main():
 
     # 音频根路径（用于 GitHub Pages 等远程部署场景）
     audio_root = input("请输入音频根路径 AudioRoot（本地部署留空，远程部署输入URL如 'https://your-server.com/'）: ").strip()
+    submission_url = input(
+        "请输入结果提交地址 BeaqleServiceURL（本地部署留空，远程部署输入Worker URL如 'https://mos-results-api.<subdomain>.workers.dev/api/submissions'）: "
+    ).strip()
 
     # 如果用户没有输入，使用默认值
     if not sets_directory:
         sets_directory = "D:/我的文档/Desktop/mos/audio/vocos_mos_set"
     if not output_file:
         output_file = "D:/我的文档/Desktop/mos/audio/config/aishell3_new_config_mushra.js"
+    if not submission_url:
+        submission_url = "/web_service/beaqleJS_Service.php"
 
     # 执行生成操作
-    generate_config_from_sets(sets_directory, output_file, test_type.upper(), model_a_name, model_b_name, audio_root)
+    generate_config_from_sets(
+        sets_directory,
+        output_file,
+        test_type.upper(),
+        model_a_name,
+        model_b_name,
+        audio_root,
+        submission_url,
+    )
 
 
 if __name__ == "__main__":

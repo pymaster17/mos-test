@@ -14,6 +14,20 @@
     // bypass any (proxy) caching
     header("Cache-Control: no-cache, must-revalidate");    
 
+    function sanitize_username($raw_name) {
+        $username = str_replace(' ', '_', $raw_name);
+        return preg_replace('/[^a-zA-Z0-9_-]/s', '', $username);
+    }
+
+    function build_filename($results_prefix, $username) {
+        $filename = date("Ymd-Hi")."_".$username;
+        $filenumber = mt_rand();
+        while (file_exists($results_prefix.$filename."_".dechex($filenumber).".txt")) {
+            $filenumber++;
+        }
+        return $filename."_".dechex($filenumber).".txt";
+    }
+
     // check if data was received by a POST request
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -22,32 +36,48 @@
         header("Access-Control-Allow-Methods: POST");
         header('Content-type: application/json');
 
-        // check if necessary data is available
-        if (isset($_POST['testresults']) && (strlen($_POST['testresults'])<1024*64)) { // maximum allowed upload size is 64kB
-        
+        $content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : '';
+        $raw_body = file_get_contents('php://input');
+        $decoded_json = null;
+
+        if (strpos($content_type, 'application/json') !== false && !empty($raw_body)) {
+            $decoded_json = json_decode($raw_body, true);
+
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded_json)) {
+                $username = "";
+                if (isset($decoded_json['participant']['userName']) && strlen($decoded_json['participant']['userName']) < 128) {
+                    $username = sanitize_username($decoded_json['participant']['userName']);
+                }
+
+                $filename_data = build_filename($results_prefix, $username);
+                $succ = file_put_contents(
+                    $results_prefix.$filename_data,
+                    json_encode($decoded_json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+                );
+
+                if ($succ === false) {
+                    $return['error'] = true;
+                    $return['message'] = "Error writing data to file! (".$results_prefix.$filename_data.")";
+                } else {
+                    $return['error'] = false;
+                    $return['message'] = "Data is saved!";
+                }
+            } else {
+                $return['error'] = true;
+                $return['message'] = "Invalid JSON payload sent!";
+            }
+        }
+        // backwards compatibility with the original BeaqleJS form payload
+        else if (isset($_POST['testresults']) && (strlen($_POST['testresults'])<1024*64)) { // maximum allowed upload size is 64kB
             $testresults = $_POST['testresults'];
             
-            // generate filename
             if (isset($_POST['username']) && (strlen($_POST['username'])<128)) {
-                $username = $_POST['username'];
-                $username = str_replace(' ', '_',  $username);
-                // Remove anything from the username which isnt a standard letter, number, _ or -.
-                // This is necessary to avoid path injection
-                // because the username is used within the file name.
-                $username = preg_replace('/[^a-zA-Z0-9_-]/s', '',  $username);
+                $username = sanitize_username($_POST['username']);
             } else {
                 $username = "";
             }
-       	    $filename = date("Ymd-Hi")."_".$username;
 
-            // add a random suffix 
-  	        $filenumber = mt_rand();
-            while (file_exists($results_prefix.$filename."_".dechex($filenumber).".txt")) {
-                $filenumber++;
-            }
-        	$filename_data = $filename."_".dechex($filenumber).".txt";
-        	
-            // write the file
+            $filename_data = build_filename($results_prefix, $username);
             $succ = file_put_contents($results_prefix.$filename_data, print_r($testresults, TRUE));
 
             if ($succ===false) {

@@ -1,12 +1,27 @@
 *~
 .idea/
+.DS_Store
+audio/.DS_Store
+audio/*/.DS_Store
 
 # 忽略所有音频测试集（由 organize_audio_files.py 生成，体积大）
 audio/vocos_mos_set/
 audio/*_set/
+audio/ab_test_source/
+audio/voxcpm_ab_test_sets/
+
+# 本地原始音频目录（通过 R2 托管，不提交到仓库）
+VoxCPM_GM/
+VoxCPM_SC/
+reference/
 
 # 忽略测试结果
 web_service/results/
 
 # 保留脚本和示例配置，忽略生成的配置
 # config/*.js  # 如果配置也是自动生成的，可取消注释
+
+# Cloudflare Worker local files
+cloudflare/results-api/node_modules/
+cloudflare/results-api/.wrangler/
+cloudflare/results-api/.dev.vars

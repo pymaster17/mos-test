@@ -1,0 +1,12 @@
+name = "mos-results-api"
+main = "src/index.js"
+compatibility_date = "2026-04-02"
+workers_dev = true
+
+[[d1_databases]]
+binding = "RESULTS_DB"
+database_name = "mos-results"
+database_id = "c35ad555-f992-4d98-8f29-2d202a708e0d"
+
+[vars]
+ALLOWED_ORIGINS = "https://pymaster17.github.io"

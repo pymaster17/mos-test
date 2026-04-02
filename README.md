@@ -16,7 +16,9 @@
   - `organize_audio_files.py`: 自动筛选指定时长范围的音频，将来自不同模型（文件夹）的同名音频文件整理为独立的测试集（`set` 文件夹）。支持选择特定模型进行 AB 测试。
   - `generate_config.py`: 扫描 `set` 文件夹，自动生成符合 BeaqleJS 格式的 `TestConfig` 配置文件。支持 MOS、SMOS 和 AB 三种测试类型。
 - **Docker 快速部署**: 内置 `docker-compose.yml` 配置，使用 Docker 可实现一键启动 Web 服务，无需手动配置 PHP 环境。
-- **在线结果收集**: 后端采用 PHP 服务，可在线收集测试者提交的评分结果，并以 JSON 格式保存在服务器端。
+- **在线结果收集**: 前端支持将结果提交到 `BeaqleServiceURL` 指定的在线接口。仓库内提供两种可用实现：
+  - `web_service/beaqleJS_Service.php`：适合 Docker / VPS / Apache-PHP 部署。
+  - `cloudflare/results-api/`：适合 GitHub Pages + Cloudflare D1 的无服务器部署。
 
 ## 3. 目录结构
 
@@ -134,8 +136,15 @@ MOS-test-data/
 
 -   测试者完成测试并提交后，结果将以 JSON 文件的形式保存在 `web_service/results/` 目录下。
 -   **AB 偏好测试结果格式**: 每个测试项会记录 `PresentationOrder`（A/B 实际对应的模型）和 `Preference`（用户选择的偏好：A、B 或 Equal）。
--   **重要**: 请确保 Web 服务器对 `web_service/results/` 目录拥有**写入权限**。使用 `docker-compose` 部署时通常无需额外配置。如果手动部署，您可能需要执行 `chmod -R 777 web_service/results` 或配置正确的用户权限。
+-   **重要**: 如果使用仓库内 PHP 服务，请确保 Web 服务器对 `web_service/results/` 目录拥有**写入权限**。使用 `docker-compose` 部署时通常无需额外配置。如果手动部署，您可能需要执行 `chmod -R 777 web_service/results` 或配置正确的用户权限。
 
-## 6. 致谢
+## 6. GitHub Pages + Cloudflare R2 + D1
+
+如果您希望将网页托管在 GitHub Pages、将音频托管在 Cloudflare R2、并将结果写入 Cloudflare D1，可直接参考部署文档：
+
+- [`docs/github-pages-r2-d1.md`](docs/github-pages-r2-d1.md)
+- [`cloudflare/results-api/README.md`](cloudflare/results-api/README.md)
+
+## 7. 致谢
 
 本项目基于优秀的开源项目 [BeaqleJS](https://github.com/HSU-ANT/beaqlejs) 构建，并对其进行了功能封装和易用性改造。感谢原作者 S. Kraft 和 U. Zölzer 的杰出工作。

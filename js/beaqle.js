@@ -881,118 +881,108 @@ $.extend({ alert: function (message, title) {
     }
 
     // ###################################################################
+    ListeningTest.prototype.getTestMode = function () {
+        if (window.location.pathname.includes('ABTest.html')) {
+            return 'AB';
+        }
+        if (window.location.pathname.includes('SMOS.html')) {
+            return 'SMOS';
+        }
+        return 'MOS';
+    }
+
+    // ###################################################################
+    ListeningTest.prototype.buildSubmissionPayload = function () {
+        // Regenerate result objects if the user submits directly after finishing.
+        if (!this.TestState.EvalResults || this.TestState.EvalResults.length === 0) {
+            this.formatResults();
+        }
+
+        return {
+            schemaVersion: 1,
+            submittedAt: new Date().toISOString(),
+            participant: {
+                userName: $('#UserName').val().trim(),
+                userEmail: $('#UserEMail').val().trim(),
+                userComment: $('#UserComment').val().trim()
+            },
+            test: {
+                name: this.TestConfig.TestName || "",
+                mode: this.getTestMode(),
+                page: window.location.pathname,
+                href: window.location.href,
+                audioRoot: this.TestConfig.AudioRoot || "",
+                sequence: this.TestState.TestSequence.slice(0),
+                fileMappings: this.TestState.FileMappings,
+                rawRatings: this.TestState.Ratings,
+                evalResults: this.TestState.EvalResults
+            },
+            client: {
+                userAgent: navigator.userAgent,
+                language: navigator.language || "",
+                referrer: document.referrer || ""
+            }
+        };
+    }
+
+    // ###################################################################
     // submit test results to server
     ListeningTest.prototype.SubmitTestResults = function () {
-
-        // --- Google Form Details ---
-        var formId;
-        var entryIDs;
-
-        // Check which test is running based on the HTML file name
-        if (window.location.pathname.includes('SMOS.html')) {
-            // SMOS Test Form
-            formId = "1FAIpQLSfpkNHpEhaCrKo6HBHudx52Fn4m7-0l3AjSzG1s9ywAVl9EEg";
-            entryIDs = {
-                userName: "entry.908762789",
-                results: "entry.1174308381"
-            };
-        } else if (window.location.pathname.includes('ABTest.html')) {
-            // AB Preference Test Form (TODO: configure your own Google Form ID here)
-            formId = "1FAIpQLSdi2BUZb7QL6oLE5BSRIhSsTBsM3vBQfZ_YI872XLwCqoCOzA";
-            entryIDs = {
-                userName: "entry.127255870",
-                results: "entry.1823669561"
-            };
-        } else {
-            // MOS Test Form (default)
-            formId = "1FAIpQLSdi2BUZb7QL6oLE5BSRIhSsTBsM3vBQfZ_YI872XLwCqoCOzA";
-            entryIDs = {
-                userName: "entry.127255870",
-                results: "entry.1823669561"
-            };
-        }
-        
-        var formUrl = "https://docs.google.com/forms/d/e/" + formId + "/formResponse";
-        // -------------------------
-
-        var UserObj = new Object();
-        UserObj.UserName = $('#UserName').val();
-
-        // The EvalResults are populated by the formatResults function, which is called before this.
-        var resultsJsonString = JSON.stringify(this.TestState.EvalResults, null, 2);
-
+        var endpoint = (this.TestConfig.BeaqleServiceURL || "").trim();
+        var payload = this.buildSubmissionPayload();
         var testHandle = this;
 
-        // Show a "submitting..." message
+        if (!endpoint) {
+            $('#SubmitError').show();
+            $('#SubmitError > #ErrorCode').html("No online submission endpoint is configured. Please download your results and send them manually.");
+            if (this.browserFeatures.webAPIs['Blob']) {
+                $("#SubmitBox > .submitDownload").show();
+            }
+            return;
+        }
+
         $('#BtnSubmitData').button('option', { icons: { primary: 'load-indicator' }, label: 'Submitting...' });
         $('#SubmitError').hide();
 
-        var promise = new Promise(function(resolve, reject) {
-            // Create a hidden iframe to be the target of the form submission
-            var iframeName = "hidden-iframe-single";
-            var iframe = document.createElement("iframe");
-            iframe.name = iframeName;
-            iframe.style.display = "none";
-            
-            // Create a form element
-            var form = document.createElement("form");
-            form.action = formUrl;
-            form.method = "POST";
-            form.target = iframeName;
-            form.style.display = "none";
-
-            // Function to create and append hidden input fields
-            function addHiddenInput(key, value) {
-                var input = document.createElement("input");
-                input.type = "hidden";
-                input.name = key;
-                input.value = value;
-                form.appendChild(input);
+        fetch(endpoint, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        }).then(function(response) {
+            return response.text().then(function(text) {
+                var data = null;
+                if (text) {
+                    try {
+                        data = JSON.parse(text);
+                    } catch (error) {
+                        data = null;
+                    }
+                }
+                return {
+                    ok: response.ok,
+                    status: response.status,
+                    data: data
+                };
+            });
+        }).then(function(result) {
+            if (!result.ok || (result.data && result.data.success === false)) {
+                var backendMessage = result.data && result.data.message ? result.data.message : "Unknown submission error.";
+                throw new Error(backendMessage);
             }
 
-            // Add data as hidden inputs
-            addHiddenInput(entryIDs.userName, UserObj.UserName);
-            addHiddenInput(entryIDs.results, resultsJsonString);
-            
-            document.body.appendChild(iframe);
-            document.body.appendChild(form);
-
-            var timeout = setTimeout(function() {
-                document.body.removeChild(form);
-                document.body.removeChild(iframe);
-                reject(new Error('Submission timeout'));
-            }, 10000); // 10 second timeout
-
-            iframe.onload = function() {
-                clearTimeout(timeout);
-                console.log("Successfully submitted all results.");
-                document.body.removeChild(form);
-                document.body.removeChild(iframe);
-                resolve();
-            };
-            iframe.onerror = function() {
-                clearTimeout(timeout);
-                document.body.removeChild(form);
-                document.body.removeChild(iframe);
-                reject(new Error('Submission error'));
-            };
-            
-            form.submit();
-        });
-
-        promise.then(function() {
-            // Success
             $('#SubmitBox').html("Your submission was successful.<br/><br/>");
             testHandle.TestState.TestIsRunning = 0;
         }).catch(function(error) {
-            // Error
             $('#SubmitError').show();
-            $('#SubmitError > #ErrorCode').html("An error occurred while submitting. Please download your results and send them manually.");
+            $('#SubmitError > #ErrorCode').html("An error occurred while submitting. Please download your results and send them manually.<br/>" + error.message);
             $('#BtnSubmitData').button('option', { icons: { primary: 'ui-icon-alert' }, label: 'Submit' });
             if (testHandle.browserFeatures.webAPIs['Blob']) {
                 $("#SubmitBox > .submitDownload").show();
             }
-            console.error('Google Form submission error:', error);
+            console.error('Submission error:', error);
         });
     }
 
