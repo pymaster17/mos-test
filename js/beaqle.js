@@ -141,11 +141,21 @@
     
         var audiotag = document.createElement("audio");
         var pageOrigin = window.location.origin;
+        var isCrossOrigin = (path.indexOf('http://') === 0 || path.indexOf('https://') === 0) &&
+            path.indexOf(pageOrigin) !== 0;
 
         // Cross-origin audio needs anonymous CORS for Web Audio routing.
-        if ((path.indexOf('http://') === 0 || path.indexOf('https://') === 0) &&
-            path.indexOf(pageOrigin) !== 0) {
+        if (isCrossOrigin) {
             audiotag.crossOrigin = 'anonymous';
+
+            // Browsers can still zero out MediaElementAudioSource output for
+            // cross-origin media even when plain <audio> playback is allowed.
+            // Fall back to direct element playback so GitHub Pages + R2 stays audible.
+            if (this.waContext !== false) {
+                console.warn('Disabling Web Audio for cross-origin audio playback:', path);
+                this.waContext = false;
+                this.gainNodes = new Array();
+            }
         }
 
         audiotag.setAttribute('src', path);
