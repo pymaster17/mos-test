@@ -140,6 +140,13 @@
     AudioPool.prototype.addAudio = function(path, ID){
     
         var audiotag = document.createElement("audio");
+        var pageOrigin = window.location.origin;
+
+        // Cross-origin audio needs anonymous CORS for Web Audio routing.
+        if ((path.indexOf('http://') === 0 || path.indexOf('https://') === 0) &&
+            path.indexOf(pageOrigin) !== 0) {
+            audiotag.crossOrigin = 'anonymous';
+        }
 
         audiotag.setAttribute('src', path);
         audiotag.setAttribute('class', 'audiotags');
@@ -177,6 +184,13 @@
     // play audio with specified ID
     AudioPool.prototype.play = function(ID){
         var audiotag = $('#'+this.PoolID+' > #audio'+ID).get(0);
+
+        // Modern browsers often start AudioContext in suspended state until
+        // a user gesture resumes it. Without this, playback UI can advance
+        // while routed audio remains silent.
+        if ((this.waContext !== false) && (this.waContext.state === 'suspended')) {
+            this.waContext.resume();
+        }
         
         if ((this.AutoReturn===false) &&
             (this.lastAudioPosition + this.fadeDelay <= (this.ABPos[1] / 100 * audiotag.duration)) &&
