@@ -552,6 +552,21 @@ $.extend({ alert: function (message, title) {
         // In versions of chrome > 71 this has to be done in response to
         // a user action in order to be able to play audio (https://goo.gl/7K7WLu)
         this.audioPool = new AudioPool('AudioPool');
+
+        var audioRoot = this.TestConfig.AudioRoot || "";
+        var isCrossOriginRoot = false;
+        if ((audioRoot.indexOf('http://') === 0 || audioRoot.indexOf('https://') === 0) &&
+            audioRoot.indexOf(window.location.origin) !== 0) {
+            isCrossOriginRoot = true;
+        }
+
+        if (isCrossOriginRoot && this.audioPool.waContext !== false) {
+            console.warn('Disabling Web Audio for cross-origin AudioRoot:', audioRoot);
+            this.audioPool.waContext = false;
+            this.audioPool.gainNodes = new Array();
+            this.browserFeatures.webAPIs['webAudio'] = false;
+        }
+
         this.audioPool.register();
         this.audioPool.onTimeUpdate = $.proxy(this.audioTimeCallback, this);
         this.audioPool.onError = $.proxy(this.audioErrorCallback, this);
