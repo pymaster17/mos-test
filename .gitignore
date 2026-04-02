@@ -1,1 +1,12 @@
 *~
+.idea/
+
+# 忽略所有音频测试集（由 organize_audio_files.py 生成，体积大）
+audio/vocos_mos_set/
+audio/*_set/
+
+# 忽略测试结果
+web_service/results/
+
+# 保留脚本和示例配置，忽略生成的配置
+# config/*.js  # 如果配置也是自动生成的，可取消注释

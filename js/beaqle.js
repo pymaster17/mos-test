@@ -896,6 +896,13 @@ $.extend({ alert: function (message, title) {
                 userName: "entry.908762789",
                 results: "entry.1174308381"
             };
+        } else if (window.location.pathname.includes('ABTest.html')) {
+            // AB Preference Test Form (TODO: configure your own Google Form ID here)
+            formId = "1FAIpQLSdi2BUZb7QL6oLE5BSRIhSsTBsM3vBQfZ_YI872XLwCqoCOzA";
+            entryIDs = {
+                userName: "entry.127255870",
+                results: "entry.1823669561"
+            };
         } else {
             // MOS Test Form (default)
             formId = "1FAIpQLSdi2BUZb7QL6oLE5BSRIhSsTBsM3vBQfZ_YI872XLwCqoCOzA";
@@ -1821,36 +1828,61 @@ PrefTest.prototype.formatResults = function () {
     var cell = row.insertCell(-1);
     cell.innerHTML = "Test Name and ID";
     cell = row.insertCell(-1);
-    cell.innerHTML = "presented order";
-    cell = row.insertCell(-1);
     cell.innerHTML = "time in ms";
     cell = row.insertCell(-1);
-    cell.innerHTML = "chosen preference";
+    cell.innerHTML = "Preferred Model";
 
-    var numCorrect = 0;
-    var numWrong = 0;
+    // Helper: extract model name from file path
+    // e.g. "audio/ab_set/set1/sample_001_hifigan.wav" -> "hifigan"
+    function extractModelName(filePath) {
+        if (!filePath) return "unknown";
+        var basename = filePath.replace(/^.*[\\\/]/, '');  // get filename
+        var nameNoExt = basename.replace(/\.[^.]+$/, '');  // remove extension
+        var lastUnderscore = nameNoExt.lastIndexOf('_');
+        if (lastUnderscore > 0) {
+            return nameNoExt.substring(lastUnderscore + 1);
+        }
+        return nameNoExt;
+    }
 
-    // 遍历每个测试集评估并构建结果展示内容（原代码已有逻辑，添加Equal选项相关展示处理）
     for (var i = 0; i < this.TestConfig.Testsets.length; i++) {
         this.TestState.EvalResults[i] = new Object();
         this.TestState.EvalResults[i].TestID = this.TestConfig.Testsets[i].TestID;
         if (this.TestState.TestSequence.indexOf(i) >= 0) {
+            var mapping = this.TestState.FileMappings[i];
+            var files   = this.TestConfig.Testsets[i].Files;
+            var rating  = this.TestState.Ratings[i];
+
+            // Resolve: which original config key did the user actually pick?
+            // mapping.A = the original file key shown in position A
+            // mapping.B = the original file key shown in position B
+            var preferredFileKey = null;
+            if (rating === "A") {
+                preferredFileKey = mapping.A;  // original key shown at position A
+            } else if (rating === "B") {
+                preferredFileKey = mapping.B;  // original key shown at position B
+            }
+
+            var preferredModel = "Equal";
+            var preferredFile  = "";
+            if (preferredFileKey !== null) {
+                preferredFile  = files[preferredFileKey] || "";
+                preferredModel = extractModelName(preferredFile);
+            }
+
+            // Store only essential results
+            this.TestState.EvalResults[i].PreferredModel  = preferredModel;
+            this.TestState.EvalResults[i].PreferredFile   = preferredFile;
+
+            // Build display table
             row = tab.insertRow(-1);
             cell = row.insertCell(-1);
-            cell.innerHTML = this.TestConfig.Testsets[i].Name + "(" + this.TestConfig.Testsets[i].TestID + ")";
+            cell.innerHTML = this.TestConfig.Testsets[i].Name + " (" + this.TestConfig.Testsets[i].TestID + ")";
             cell = row.insertCell(-1);
-            this.TestState.EvalResults[i].PresentationOrder = "A=" + this.TestState.FileMappings[i].A + ", B=" + this.TestState.FileMappings[i].B;
-            cell.innerHTML = this.TestState.EvalResults[i].PresentationOrder;
-            cell = row.insertCell(-1);
-            this.TestState.EvalResults[i].Runtime = this.TestState.Runtime[i];
             cell.innerHTML = this.TestState.EvalResults[i].Runtime;
             cell = row.insertCell(-1);
-            this.TestState.EvalResults[i].Preference = this.TestState.Ratings[i];
-            if (this.TestState.Ratings[i] === "Equal") {
-                cell.innerHTML = "Equal";
-            } else {
-                cell.innerHTML = this.TestState.EvalResults[i].Preference;
-            }
+            cell.style.fontWeight = "bold";
+            cell.innerHTML = preferredModel;
         }
     }
     resultstring += tab.outerHTML;

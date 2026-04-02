@@ -17,7 +17,7 @@ def get_wav_duration(file_path):
         print(f"无法读取文件时长: {file_path}, 错误: {e}")
         return 0
 
-def organize_audio_files(base_dir, output_dir, target_count, min_duration=2, max_duration=5):
+def organize_audio_files(base_dir, output_dir, target_count, min_duration=2, max_duration=5, selected_models=None):
     """
     组织音频文件：筛选时长，随机选择，并分组到set文件夹中
 
@@ -27,6 +27,7 @@ def organize_audio_files(base_dir, output_dir, target_count, min_duration=2, max
         target_count (int): 希望最终生成的set文件夹数量
         min_duration (float): 音频最小有效时长
         max_duration (float): 音频最大有效时长
+        selected_models (list): 可选，指定只使用哪些模型文件夹。为 None 时使用所有模型。
     """
     # 确保输出目录存在，如果存在则清空
     if os.path.exists(output_dir):
@@ -34,7 +35,20 @@ def organize_audio_files(base_dir, output_dir, target_count, min_duration=2, max
     os.makedirs(output_dir, exist_ok=True)
 
     # 1. 收集所有模型文件夹中的音频文件
-    model_folders = [d for d in os.listdir(base_dir) if os.path.isdir(os.path.join(base_dir, d))]
+    all_model_folders = [d for d in os.listdir(base_dir) if os.path.isdir(os.path.join(base_dir, d))]
+    
+    if selected_models:
+        model_folders = [d for d in all_model_folders if d in selected_models]
+        missing = set(selected_models) - set(model_folders)
+        if missing:
+            print(f"警告: 以下指定的模型文件夹未找到: {missing}")
+            print(f"可用的模型文件夹: {all_model_folders}")
+            return
+        print(f"已选择模型: {model_folders}")
+    else:
+        model_folders = all_model_folders
+        print(f"使用所有模型: {model_folders}")
+
     audio_files_by_basename = {}
 
     print("开始收集和筛选音频文件...")
@@ -45,7 +59,7 @@ def organize_audio_files(base_dir, output_dir, target_count, min_duration=2, max
                 file_path = os.path.join(folder_path, filename)
                 duration = get_wav_duration(file_path)
 
-                # 2. 筛选时长在2-5秒之间的文件
+                # 2. 筛选时长在指定范围之间的文件
                 if min_duration <= duration <= max_duration:
                     base_name = os.path.splitext(filename)[0]
                     if base_name not in audio_files_by_basename:
@@ -54,10 +68,10 @@ def organize_audio_files(base_dir, output_dir, target_count, min_duration=2, max
     
     print(f"找到 {len(audio_files_by_basename)} 组符合时长条件的音频。")
 
-    # 过滤掉不完整的组（即并非在所有模型文件夹中都存在的文件）
+    # 过滤掉不完整的组（即并非在所有选定的模型文件夹中都存在的文件）
     complete_sets = {name: files for name, files in audio_files_by_basename.items() if len(files) == len(model_folders)}
     
-    print(f"其中有 {len(complete_sets)} 组是完整的（在所有模型中都存在）。")
+    print(f"其中有 {len(complete_sets)} 组是完整的（在所有选定模型中都存在）。")
 
     # 3. 随机选择目标数量的文件
     if len(complete_sets) < target_count:
@@ -97,6 +111,19 @@ def main():
         print("无效的数字，将使用默认值 50。")
         target_count = 50
 
+    # 询问是否只选择特定模型（用于AB测试）
+    use_selected = input("是否只选择特定模型？(y/n, 默认n，AB测试请选y): ").strip().lower()
+    selected_models = None
+    if use_selected == 'y':
+        # 先列出可用的模型文件夹
+        if base_dir and os.path.isdir(base_dir):
+            available = [d for d in os.listdir(base_dir) if os.path.isdir(os.path.join(base_dir, d))]
+            print(f"可用的模型文件夹: {available}")
+        model_names = input("请输入要使用的模型名称，用逗号分隔（例如: hifigan,vocos）: ").strip()
+        if model_names:
+            selected_models = [m.strip() for m in model_names.split(',')]
+            print(f"将仅使用以下模型: {selected_models}")
+
     # 如果用户没有输入，使用默认值
     if not base_dir:
         base_dir = "D:/Dataset/MOS-test"# 示例路径
@@ -104,7 +131,7 @@ def main():
         output_dir = "D:/Projects/mos/audio/vocos_mos_set" # 示例路径
 
     # 执行组织操作
-    organize_audio_files(base_dir, output_dir, target_count)
+    organize_audio_files(base_dir, output_dir, target_count, selected_models=selected_models)
 
 
 if __name__ == "__main__":

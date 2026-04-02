@@ -1,19 +1,20 @@
-# MOS/SMOS 音频主观测试系统
+# MOS/SMOS/AB 音频主观测试系统
 
 ## 1. 项目简介
 
-本项目是一个基于 [BeaqleJS](https://github.com/HSU-ANT/beaqlejs) 框架开发的 MOS (Mean Opinion Score) 和 SMOS (Similarity Mean Opinion Score) 音频主观测试系统。
+本项目是一个基于 [BeaqleJS](https://github.com/HSU-ANT/beaqlejs) 框架开发的 MOS (Mean Opinion Score)、SMOS (Similarity Mean Opinion Score) 和 AB Preference (偏好选择) 音频主观测试系统。
 
 通过提供自动化的 Python 脚本，本项目极大地简化了测试集的创建和配置过程，并支持使用 Docker 进行一键部署，让研究人员可以快速搭建并开展音频质量的主观评估实验。
 
 ## 2. 功能特性
 
-- **两种测试模式**:
+- **三种测试模式**:
   - **MOS**: 对单个音频进行质量评分（1-5分）。
   - **SMOS**: 将待测音频与参考音频进行相似度比较评分（1-5分）。
+  - **AB Preference**: 将两个不同模型生成的同一样本进行配对比较，测试者直接选择偏好的那一个（支持 A 胜、B 胜、Equal 三种选项）。
 - **自动化辅助脚本**:
-  - `organize_audio_files.py`: 自动筛选指定时长范围的音频，将来自不同模型（文件夹）的同名音频文件整理为独立的测试集（`set` 文件夹）。
-  - `generate_config.py`: 扫描 `set` 文件夹，自动生成符合 BeaqleJS 格式的 `TestConfig` 配置文件。
+  - `organize_audio_files.py`: 自动筛选指定时长范围的音频，将来自不同模型（文件夹）的同名音频文件整理为独立的测试集（`set` 文件夹）。支持选择特定模型进行 AB 测试。
+  - `generate_config.py`: 扫描 `set` 文件夹，自动生成符合 BeaqleJS 格式的 `TestConfig` 配置文件。支持 MOS、SMOS 和 AB 三种测试类型。
 - **Docker 快速部署**: 内置 `docker-compose.yml` 配置，使用 Docker 可实现一键启动 Web 服务，无需手动配置 PHP 环境。
 - **在线结果收集**: 后端采用 PHP 服务，可在线收集测试者提交的评分结果，并以 JSON 格式保存在服务器端。
 
@@ -33,6 +34,7 @@ mos/
 ├── js/                      # BeaqleJS 核心脚本
 ├── MOS.html                 # MOS 测试主页面
 ├── SMOS.html                # SMOS 测试主页面
+├── ABTest.html              # AB 偏好测试主页面
 └── README.md                # 本文档
 ```
 
@@ -71,36 +73,43 @@ MOS-test-data/
     - **包含多个模型音频文件夹的基目录路径**: 即步骤一中创建的 `MOS-test-data` 文件夹的绝对路径。
     - **输出目录路径**: 推荐使用默认的 `audio/vocos_mos_set` 路径（相对于项目根目录）。
     - **希望随机选择的音频文件数量**: 您希望最终生成的测试集数量。
+    - **是否只选择特定模型**: 
+      - 如果是 MOS/SMOS 测试，选择 `n`（使用所有模型）。
+      - 如果是 AB 偏好测试，选择 `y`，然后输入要对比的两个模型名称（用逗号分隔，例如 `hifigan,vocos`）。
 
-脚本会自动筛选出所有模型都存在的、且时长在 2-5 秒之间的音频，然后随机选择指定数量的组，复制并重命名到输出目录下的 `set1`, `set2`, ... 文件夹中。
+脚本会自动筛选出所有选定模型都存在的、且时长在 2-5 秒之间的音频，然后随机选择指定数量的组，复制并重命名到输出目录下的 `set1`, `set2`, ... 文件夹中。
 
 ### 步骤三：生成配置文件
 
-此步骤会根据上一步生成的 `set` 文件夹，自动创建 `MOS.js` 或 `SMOS.js` 配置文件。
+此步骤会根据上一步生成的 `set` 文件夹，自动创建配置文件。
 
 1.  运行 `generate_config.py` 脚本：
     ```bash
     python audio/generate_config.py
     ```
 2.  根据脚本提示，依次输入：
-    - **包含set文件夹的目录路径**: 即上一步的输出目录 `audio/vocos_mos_set` 的绝对路径。
-    - **输出配置文件路径**: 例如 `config/my_test_config.js`。
-    - **测试类型**: 输入 `MOS` 或 `SMOS`。
+    - **包含set文件夹的目录路径**: 即上一步的输出目录的绝对路径。
+    - **输出配置文件路径**: 例如 `config/ABTest.js`。
+    - **测试类型**: 输入 `MOS`、`SMOS` 或 `AB`。
+    - **(仅 AB 模式)** **模型A和模型B的名称**: 输入文件名中对应模型的后缀（例如 `hifigan` 和 `vocos`）。
 
-脚本将在指定的输出路径生成一个完整的 BeaqleJS 配置文件。
+脚本将在指定的输出路径生成一个完整的 BeaqleJS 配置文件。AB 模式下会自动启用 `RandomizeFileOrder`，在每个测试中随机交换 A/B 的呈现顺序，避免位置偏差。
 
 ### 步骤四：配置测试页面
 
 将生成的配置文件链接到 HTML 页面。
 
-1.  打开 `MOS.html` (如果生成的是 MOS 配置) 或 `SMOS.html` (如果生成的是 SMOS 配置)。
+1.  根据测试类型，打开对应的 HTML 文件：
+    - MOS 测试 → `MOS.html`
+    - SMOS 测试 → `SMOS.html`
+    - AB 偏好测试 → `ABTest.html`
 2.  找到以下代码行：
     ```html
-    <script src="config/MOS.js" type="text/javascript"></script>
+    <script src="config/ABTest.js" type="text/javascript"></script>
     ```
 3.  将其中的 `src` 属性修改为您在步骤三中生成的配置文件路径，例如：
     ```html
-    <script src="config/my_test_config.js" type="text/javascript"></script>
+    <script src="config/my_ab_test.js" type="text/javascript"></script>
     ```
 
 ### 步骤五：部署测试系统
@@ -124,6 +133,7 @@ MOS-test-data/
 ## 5. 查看测试结果
 
 -   测试者完成测试并提交后，结果将以 JSON 文件的形式保存在 `web_service/results/` 目录下。
+-   **AB 偏好测试结果格式**: 每个测试项会记录 `PresentationOrder`（A/B 实际对应的模型）和 `Preference`（用户选择的偏好：A、B 或 Equal）。
 -   **重要**: 请确保 Web 服务器对 `web_service/results/` 目录拥有**写入权限**。使用 `docker-compose` 部署时通常无需额外配置。如果手动部署，您可能需要执行 `chmod -R 777 web_service/results` 或配置正确的用户权限。
 
 ## 6. 致谢

@@ -1,3 +1,13 @@
+## Custom v0.4 - AB Preference Test ##
+
+* New AB Preference Test mode: compare two models head-to-head with A/B/Equal selection
+* Added `ABTest.html` page with bilingual (EN/CN) instructions
+* Extended `generate_config.py` to support `AB` test type with model name specification
+* Extended `organize_audio_files.py` with `selected_models` parameter for AB pair selection
+* AB mode auto-enables `RandomizeFileOrder` to prevent position bias
+* Updated `beaqle.js` with ABTest.html routing in submit handler
+* Updated README with comprehensive AB test documentation
+
 ## BeaqleJS v0.3 ##
 
 * Add auto return option on switching items
