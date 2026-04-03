@@ -4,7 +4,7 @@
 audio/.DS_Store
 audio/*/.DS_Store
 
-# 忽略所有音频测试集（由 organize_audio_files.py 生成，体积大）
+# 忽略旧结构残留目录，避免本地历史产物进入版本库
 audio/vocos_mos_set/
 audio/*_set/
 audio/ab_test_source/

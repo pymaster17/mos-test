@@ -41,7 +41,7 @@ mos-test/
 │   ├── prepare_unified_audio.py   # 将旧目录规范化到统一结构
 │   ├── build_audio_manifest.py    # 从统一结构生成 manifest
 │   ├── generate_config.py         # 从 manifest 生成测试配置
-│   └── organize_audio_files.py    # 旧 set 流程脚本，保留作兼容
+│   └── decode_transcripts.py      # 可选文本处理脚本
 ├── config/
 │   ├── audio_manifest.json
 │   ├── ABTest.js
@@ -190,5 +190,5 @@ export R2_SECRET_ACCESS_KEY="..."
 
 ## 9. 说明
 
-- 当前推荐方案已经不再依赖 `set1/set2/...` 中间目录
-- 旧的 set 流程脚本仍保留用于兼容，但不再是主路径
+- 当前方案不再依赖 `set1/set2/...` 中间目录
+- 仓库内只保留统一音频结构方案所需脚本
