@@ -929,6 +929,24 @@ $.extend({ alert: function (message, title) {
             this.formatResults();
         }
 
+        var selectedIndices = this.TestState.TestSequence.slice(0);
+        var compactFileMappings = [];
+        var compactRawRatings = [];
+        var compactEvalResults = [];
+
+        selectedIndices.forEach(function(testIdx) {
+            compactFileMappings.push(this.TestState.FileMappings[testIdx] || null);
+            compactRawRatings.push(
+                typeof this.TestState.Ratings[testIdx] === 'undefined'
+                    ? null
+                    : this.TestState.Ratings[testIdx]
+            );
+
+            if (this.TestState.EvalResults[testIdx]) {
+                compactEvalResults.push(this.TestState.EvalResults[testIdx]);
+            }
+        }, this);
+
         return {
             schemaVersion: 1,
             submittedAt: new Date().toISOString(),
@@ -943,10 +961,10 @@ $.extend({ alert: function (message, title) {
                 page: window.location.pathname,
                 href: window.location.href,
                 audioRoot: this.TestConfig.AudioRoot || "",
-                sequence: this.TestState.TestSequence.slice(0),
-                fileMappings: this.TestState.FileMappings,
-                rawRatings: this.TestState.Ratings,
-                evalResults: this.TestState.EvalResults
+                sequence: selectedIndices,
+                fileMappings: compactFileMappings,
+                rawRatings: compactRawRatings,
+                evalResults: compactEvalResults
             },
             client: {
                 userAgent: navigator.userAgent,

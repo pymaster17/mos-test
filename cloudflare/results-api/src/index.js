@@ -94,6 +94,20 @@ function getEvalResults(payload) {
   return [];
 }
 
+function getNonEmptyEvalResults(payload) {
+  return getEvalResults(payload).filter((entry) => {
+    if (entry === null || typeof entry === "undefined") {
+      return false;
+    }
+
+    if (typeof entry !== "object") {
+      return true;
+    }
+
+    return Object.keys(entry).length > 0;
+  });
+}
+
 async function sha256Hex(value) {
   const data = new TextEncoder().encode(value);
   const hash = await crypto.subtle.digest("SHA-256", data);
@@ -116,7 +130,7 @@ function validateSubmission(payload) {
   const testName = sanitizeString(payload?.test?.name, 255);
   const testMode = sanitizeString(payload?.test?.mode, 32);
   const pagePath = getPagePath(payload);
-  const evalResults = getEvalResults(payload);
+  const evalResults = getNonEmptyEvalResults(payload);
 
   if (!userName) {
     return "participant.userName is required.";
@@ -172,7 +186,7 @@ async function handleSubmit(request, env) {
     request.headers.get("User-Agent") || payload?.client?.userAgent || "",
     1024,
   );
-  const resultCount = getEvalResults(payload).length;
+  const resultCount = getNonEmptyEvalResults(payload).length;
 
   let clientIpHash = "";
   const clientIp = request.headers.get("CF-Connecting-IP");
