@@ -1,29 +1,34 @@
 # R2 Upload Helper
 
-This helper uploads the final A/B test set directory:
+This helper uploads the unified audio layout declared in [config/audio_manifest.json](/Users/pymaster/projects/mos-test/config/audio_manifest.json).
 
-- `audio/voxcpm_ab_test_sets`
+Default local layout:
 
-It sends them to the existing Cloudflare R2 bucket:
+- `audio/gt/<sample_id>.wav`
+- `audio/VoxCPM_GM/<sample_id>.wav`
+- `audio/VoxCPM_SC/<sample_id>.wav`
 
-- `mos-audio`
+Default remote layout in bucket `mos-audio`:
 
-By default the remote object keys will be created under:
+- `audio/gt/<sample_id>.wav`
+- `audio/VoxCPM_GM/<sample_id>.wav`
+- `audio/VoxCPM_SC/<sample_id>.wav`
 
-- `audio/voxcpm_ab_test_sets/...`
+That matches:
 
-That matches the paths currently referenced by [config/ABTest.js](/Users/pymaster/projects/mos-test/config/ABTest.js).
+- [config/ABTest.js](/Users/pymaster/projects/mos-test/config/ABTest.js)
+- [config/MOS.js](/Users/pymaster/projects/mos-test/config/MOS.js)
+- [config/SMOS.js](/Users/pymaster/projects/mos-test/config/SMOS.js)
 
 ## Credentials
 
 Create an R2 API token in the Cloudflare dashboard:
 
-1. Open Cloudflare Dashboard
-2. Go to `R2`
-3. Find `Manage R2 API tokens`
-4. Create a token with `Object Read & Write`
-5. Scope it to bucket `mos-audio`
-6. Copy the two values shown once:
+1. Open `R2`
+2. Open `Manage R2 API tokens`
+3. Create a token with `Object Read & Write`
+4. Scope it to bucket `mos-audio`
+5. Copy:
    - `Access Key ID`
    - `Secret Access Key`
 
@@ -35,7 +40,7 @@ export R2_SECRET_ACCESS_KEY="your-secret-access-key"
 DRY_RUN=true ./tools/R2/upload_r2_audio.sh
 ```
 
-## Upload
+## Upload all model directories from the manifest
 
 ```bash
 export R2_ACCESS_KEY_ID="your-access-key-id"
@@ -43,21 +48,21 @@ export R2_SECRET_ACCESS_KEY="your-secret-access-key"
 ./tools/R2/upload_r2_audio.sh
 ```
 
-## Custom paths
+## Upload one model directory only
 
 ```bash
 export R2_ACCESS_KEY_ID="your-access-key-id"
 export R2_SECRET_ACCESS_KEY="your-secret-access-key"
-SOURCE_DIR="audio/voxcpm_ab_test_sets" \
-REMOTE_PREFIX="audio/voxcpm_ab_test_sets" \
+SOURCE_DIR="audio/VoxCPM_GM" \
+REMOTE_PREFIX="audio/VoxCPM_GM" \
 ./tools/R2/upload_r2_audio.sh
 ```
 
 ## Notes
 
-- Default mode is `copy`, so it will upload new or changed files without deleting remote files.
+- Default mode is `copy`, so it uploads new or changed files without deleting remote files.
 - To mirror local state and delete extra remote files, use `MODE=sync`.
-- The default upload source is `audio/voxcpm_ab_test_sets`.
-- The default remote prefix is `audio/voxcpm_ab_test_sets`.
-- After upload, a sample object path should look like:
-  - `audio/voxcpm_ab_test_sets/set1/2001000001_VoxCPM_GM.wav`
+- Default manifest path is `config/audio_manifest.json`.
+- In manifest mode, the script uploads every model directory declared under `models`.
+- Sample remote object:
+  - `audio/VoxCPM_GM/2001000001.wav`

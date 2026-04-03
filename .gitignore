@@ -9,6 +9,9 @@ audio/vocos_mos_set/
 audio/*_set/
 audio/ab_test_source/
 audio/voxcpm_ab_test_sets/
+audio/gt/
+audio/VoxCPM_GM/
+audio/VoxCPM_SC/
 
 # 本地原始音频目录（通过 R2 托管，不提交到仓库）
 VoxCPM_GM/

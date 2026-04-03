@@ -8,8 +8,9 @@ REMOTE_NAME="cf_r2"
 ENDPOINT="https://${ACCOUNT_ID}.r2.cloudflarestorage.com"
 MODE="${MODE:-copy}"
 ROOT_DIR="${ROOT_DIR:-$(pwd)}"
-SOURCE_DIR="${SOURCE_DIR:-audio/voxcpm_ab_test_sets}"
-REMOTE_PREFIX="${REMOTE_PREFIX:-audio/voxcpm_ab_test_sets}"
+MANIFEST_PATH="${MANIFEST_PATH:-config/audio_manifest.json}"
+SOURCE_DIR="${SOURCE_DIR:-}"
+REMOTE_PREFIX="${REMOTE_PREFIX:-audio}"
 DRY_RUN="${DRY_RUN:-false}"
 
 if [[ -z "${R2_ACCESS_KEY_ID:-}" || -z "${R2_SECRET_ACCESS_KEY:-}" ]]; then
@@ -22,8 +23,9 @@ R2_ACCESS_KEY_ID 和 R2_SECRET_ACCESS_KEY 是必填环境变量。
   ./tools/R2/upload_r2_audio.sh
 
 可选环境变量：
-  SOURCE_DIR="audio/voxcpm_ab_test_sets"
-  REMOTE_PREFIX="audio/voxcpm_ab_test_sets"
+  MANIFEST_PATH="config/audio_manifest.json"
+  SOURCE_DIR="audio/VoxCPM_GM"
+  REMOTE_PREFIX="audio/VoxCPM_GM"
   MODE="copy"  # 或 sync
   DRY_RUN="true"
 EOF
@@ -52,28 +54,7 @@ acl = private
 no_check_bucket = true
 EOF
 
-SRC="${ROOT_DIR}/${SOURCE_DIR}"
-DEST="${REMOTE_NAME}:${BUCKET_NAME}/${REMOTE_PREFIX}"
-
-if [[ ! -d "${SRC}" ]]; then
-  echo "Source directory not found: ${SRC}" >&2
-  exit 1
-fi
-
-echo "Using endpoint: ${ENDPOINT}"
-echo "Uploading to bucket: ${BUCKET_NAME}"
-echo "Mode: ${MODE}"
-echo "Source directory: ${SRC}"
-echo "Remote prefix: ${REMOTE_PREFIX}"
-
-echo
-echo "==> ${MODE} ${SRC} -> ${DEST}"
-
-CMD=(
-  rclone
-  "${MODE}"
-  "${SRC}"
-  "${DEST}"
+COMMON_ARGS=(
   --config "${CONFIG_FILE}"
   --progress
   --checkers 16
@@ -84,12 +65,70 @@ CMD=(
 )
 
 if [[ "${DRY_RUN}" == "true" ]]; then
-  CMD+=(--dry-run)
+  COMMON_ARGS+=(--dry-run)
 fi
 
-"${CMD[@]}"
+upload_one() {
+  local source_dir="$1"
+  local remote_prefix="$2"
+  local source_abs="${ROOT_DIR}/${source_dir}"
+  local dest="${REMOTE_NAME}:${BUCKET_NAME}/${remote_prefix}"
+
+  if [[ ! -d "${source_abs}" ]]; then
+    echo "Source directory not found: ${source_abs}" >&2
+    exit 1
+  fi
+
+  echo
+  echo "==> ${MODE} ${source_abs} -> ${dest}"
+  rclone "${MODE}" "${source_abs}" "${dest}" "${COMMON_ARGS[@]}"
+}
+
+echo "Using endpoint: ${ENDPOINT}"
+echo "Uploading to bucket: ${BUCKET_NAME}"
+echo "Mode: ${MODE}"
+
+if [[ -n "${SOURCE_DIR}" ]]; then
+  echo "Single directory mode"
+  echo "Source directory: ${ROOT_DIR}/${SOURCE_DIR}"
+  echo "Remote prefix: ${REMOTE_PREFIX}"
+  upload_one "${SOURCE_DIR}" "${REMOTE_PREFIX}"
+else
+  echo "Manifest mode"
+  echo "Manifest path: ${ROOT_DIR}/${MANIFEST_PATH}"
+
+  MODEL_DIRS=()
+  while IFS= read -r model_dir; do
+    MODEL_DIRS+=("${model_dir}")
+  done < <(
+    python3 - "${ROOT_DIR}" "${MANIFEST_PATH}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+root_dir = Path(sys.argv[1])
+manifest_path = root_dir / sys.argv[2]
+manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+
+for model_name in sorted(manifest["models"].keys()):
+    print(f"audio/{model_name}")
+PY
+  )
+
+  if [[ "${#MODEL_DIRS[@]}" -eq 0 ]]; then
+    echo "No model directories found in manifest: ${MANIFEST_PATH}" >&2
+    exit 1
+  fi
+
+  echo "Model directories:"
+  printf '  %s\n' "${MODEL_DIRS[@]}"
+
+  for model_dir in "${MODEL_DIRS[@]}"; do
+    upload_one "${model_dir}" "${model_dir}"
+  done
+fi
 
 echo
 echo "Upload finished."
 echo "Quick verification:"
-echo "  rclone lsf ${REMOTE_NAME}:${BUCKET_NAME}/${REMOTE_PREFIX}/set1 --config ${CONFIG_FILE} | head"
+echo "  rclone lsf ${REMOTE_NAME}:${BUCKET_NAME}/audio/VoxCPM_GM --config ${CONFIG_FILE} | head"

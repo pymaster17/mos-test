@@ -71,6 +71,29 @@ function sanitizeString(value, maxLength) {
   return value.trim().slice(0, maxLength);
 }
 
+function getPagePath(payload) {
+  return sanitizeString(
+    payload?.test?.page ||
+      payload?.test?.pagePath ||
+      payload?.test?.href ||
+      payload?.test?.pageURL ||
+      payload?.test?.pageUrl,
+    1024,
+  );
+}
+
+function getEvalResults(payload) {
+  if (Array.isArray(payload?.test?.evalResults)) {
+    return payload.test.evalResults;
+  }
+
+  if (Array.isArray(payload?.results)) {
+    return payload.results;
+  }
+
+  return [];
+}
+
 async function sha256Hex(value) {
   const data = new TextEncoder().encode(value);
   const hash = await crypto.subtle.digest("SHA-256", data);
@@ -92,8 +115,8 @@ function validateSubmission(payload) {
   const userName = sanitizeString(payload?.participant?.userName, 128);
   const testName = sanitizeString(payload?.test?.name, 255);
   const testMode = sanitizeString(payload?.test?.mode, 32);
-  const pagePath = sanitizeString(payload?.test?.page, 255);
-  const evalResults = payload?.test?.evalResults;
+  const pagePath = getPagePath(payload);
+  const evalResults = getEvalResults(payload);
 
   if (!userName) {
     return "participant.userName is required.";
@@ -143,13 +166,13 @@ async function handleSubmit(request, env) {
   const comment = sanitizeString(payload.participant.userComment, 4000);
   const testName = sanitizeString(payload.test.name, 255);
   const testMode = sanitizeString(payload.test.mode, 32);
-  const pagePath = sanitizeString(payload.test.page, 255);
+  const pagePath = getPagePath(payload);
   const origin = request.headers.get("Origin") || "";
   const userAgent = sanitizeString(
     request.headers.get("User-Agent") || payload?.client?.userAgent || "",
     1024,
   );
-  const resultCount = Array.isArray(payload.test.evalResults) ? payload.test.evalResults.length : 0;
+  const resultCount = getEvalResults(payload).length;
 
   let clientIpHash = "";
   const clientIp = request.headers.get("CF-Connecting-IP");

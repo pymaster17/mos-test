@@ -2,149 +2,193 @@
 
 ## 1. 项目简介
 
-本项目是一个基于 [BeaqleJS](https://github.com/HSU-ANT/beaqlejs) 框架开发的 MOS (Mean Opinion Score)、SMOS (Similarity Mean Opinion Score) 和 AB Preference (偏好选择) 音频主观测试系统。
+本项目基于 [BeaqleJS](https://github.com/HSU-ANT/beaqlejs) 构建，用于开展三类主观听感测试：
 
-通过提供自动化的 Python 脚本，本项目极大地简化了测试集的创建和配置过程，并支持使用 Docker 进行一键部署，让研究人员可以快速搭建并开展音频质量的主观评估实验。
+- MOS
+- SMOS
+- AB Preference
+
+当前仓库的主流程已经统一为：
+
+- 单一音频结构：`audio/<model>/<sample_id>.wav`
+- 统一 manifest：`config/audio_manifest.json`
+- 按测试类型生成配置：`config/ABTest.js`、`config/MOS.js`、`config/SMOS.js`
 
 ## 2. 功能特性
 
-- **三种测试模式**:
-  - **MOS**: 对单个音频进行质量评分（1-5分）。
-  - **SMOS**: 将待测音频与参考音频进行相似度比较评分（1-5分）。
-  - **AB Preference**: 将两个不同模型生成的同一样本进行配对比较，测试者直接选择偏好的那一个（支持 A 胜、B 胜、Equal 三种选项）。
-- **自动化辅助脚本**:
-  - `organize_audio_files.py`: 自动筛选指定时长范围的音频，将来自不同模型（文件夹）的同名音频文件整理为独立的测试集（`set` 文件夹）。支持选择特定模型进行 AB 测试。
-  - `generate_config.py`: 扫描 `set` 文件夹，自动生成符合 BeaqleJS 格式的 `TestConfig` 配置文件。支持 MOS、SMOS 和 AB 三种测试类型。
-- **Docker 快速部署**: 内置 `docker-compose.yml` 配置，使用 Docker 可实现一键启动 Web 服务，无需手动配置 PHP 环境。
-- **在线结果收集**: 前端支持将结果提交到 `BeaqleServiceURL` 指定的在线接口。仓库内提供两种可用实现：
-  - `web_service/beaqleJS_Service.php`：适合 Docker / VPS / Apache-PHP 部署。
-  - `cloudflare/results-api/`：适合 GitHub Pages + Cloudflare D1 的无服务器部署。
+- 三种测试模式
+  - `MOS`: 对候选音频做质量评分
+  - `SMOS`: 相对于参考音频做相似度评分
+  - `AB Preference`: 两个模型直接做偏好选择
+- 统一音频组织
+  - 所有测试共用 `audio/<model>/<sample_id>.wav`
+  - 推荐参考音频目录固定为 `gt`
+- 统一配置生成
+  - [audio/build_audio_manifest.py](/Users/pymaster/projects/mos-test/audio/build_audio_manifest.py)
+  - [audio/generate_config.py](/Users/pymaster/projects/mos-test/audio/generate_config.py)
+- 两类结果后端
+  - PHP: [web_service/beaqleJS_Service.php](/Users/pymaster/projects/mos-test/web_service/beaqleJS_Service.php)
+  - Cloudflare: [cloudflare/results-api](/Users/pymaster/projects/mos-test/cloudflare/results-api)
 
 ## 3. 目录结构
 
-```
-mos/
-├── audio/                   # 存放音频文件和处理脚本
-│   ├── vocos_mos_set/       # 存放 organize_audio_files.py 生成的 set 文件夹
-│   ├── organize_audio_files.py  # 脚本：整理音频文件，生成 set 文件夹
-│   └── generate_config.py   # 脚本：根据 set 文件夹生成配置文件
-├── config/                  # 存放测试配置文件 (*.js)
-├── web_service/             # 存放 PHP 后端服务
-│   ├── results/             # (需手动创建或由服务自动创建) 存放收集到的测试结果
-│   └── beaqleJS_Service.php # 处理结果提交的后端脚本
-├── css/                     # 样式文件
-├── js/                      # BeaqleJS 核心脚本
-├── MOS.html                 # MOS 测试主页面
-├── SMOS.html                # SMOS 测试主页面
-├── ABTest.html              # AB 偏好测试主页面
-└── README.md                # 本文档
-```
-
-## 4. 使用指南
-
-### 步骤一：准备原始音频文件
-
-1.  创建一个基目录（例如 `MOS-test-data`）。
-2.  在基目录下，为每个需要评测的模型（包括 Ground Truth）创建一个子文件夹。
-3.  将各模型生成的音频文件放入对应的子文件夹中，**确保不同文件夹下的对应音频文件名（除后缀外）完全相同**。
-
-例如，目录结构应如下所示：
-
-```
-MOS-test-data/
-├── gt/                 # Ground Truth 音频
-│   ├── audio_001.wav
-│   └── audio_002.wav
-├── hifigan/            # 模型 A
-│   ├── audio_001.wav
-│   └── audio_002.wav
-└── my_vocoder/         # 模型 B
-    ├── audio_001.wav
-    └── audio_002.wav
+```text
+mos-test/
+├── audio/
+│   ├── gt/                        # 参考音频: audio/gt/<sample_id>.wav
+│   ├── VoxCPM_GM/                 # 候选模型音频
+│   ├── VoxCPM_SC/                 # 候选模型音频
+│   ├── prepare_unified_audio.py   # 将旧目录规范化到统一结构
+│   ├── build_audio_manifest.py    # 从统一结构生成 manifest
+│   ├── generate_config.py         # 从 manifest 生成测试配置
+│   └── organize_audio_files.py    # 旧 set 流程脚本，保留作兼容
+├── config/
+│   ├── audio_manifest.json
+│   ├── ABTest.js
+│   ├── MOS.js
+│   └── SMOS.js
+├── cloudflare/results-api/
+├── tools/R2/
+├── web_service/
+├── css/
+├── js/
+├── ABTest.html
+├── MOS.html
+└── SMOS.html
 ```
 
-### 步骤二：生成测试集 (Set)
+## 4. 统一音频结构
 
-此步骤会将原始音频按组整理，并筛选出符合条件的音频。
+规则：
 
-1.  在终端中运行 `organize_audio_files.py` 脚本：
-    ```bash
-    python audio/organize_audio_files.py
-    ```
-2.  根据脚本提示，依次输入：
-    - **包含多个模型音频文件夹的基目录路径**: 即步骤一中创建的 `MOS-test-data` 文件夹的绝对路径。
-    - **输出目录路径**: 推荐使用默认的 `audio/vocos_mos_set` 路径（相对于项目根目录）。
-    - **希望随机选择的音频文件数量**: 您希望最终生成的测试集数量。
-    - **是否只选择特定模型**: 
-      - 如果是 MOS/SMOS 测试，选择 `n`（使用所有模型）。
-      - 如果是 AB 偏好测试，选择 `y`，然后输入要对比的两个模型名称（用逗号分隔，例如 `hifigan,vocos`）。
+- 每个模型一个目录
+- 每个样本一个稳定的 `sample_id`
+- 所有模型的同一样本必须共享相同的 `sample_id`
 
-脚本会自动筛选出所有选定模型都存在的、且时长在 2-5 秒之间的音频，然后随机选择指定数量的组，复制并重命名到输出目录下的 `set1`, `set2`, ... 文件夹中。
+例如：
 
-### 步骤三：生成配置文件
+```text
+audio/
+├── gt/
+│   ├── 2001000001.wav
+│   └── 2001000002.wav
+├── VoxCPM_GM/
+│   ├── 2001000001.wav
+│   └── 2001000002.wav
+└── VoxCPM_SC/
+    ├── 2001000001.wav
+    └── 2001000002.wav
+```
 
-此步骤会根据上一步生成的 `set` 文件夹，自动创建配置文件。
+如果原始文件名还带有 `_generated` 或 `_reference`，先运行：
 
-1.  运行 `generate_config.py` 脚本：
-    ```bash
-    python audio/generate_config.py
-    ```
-2.  根据脚本提示，依次输入：
-    - **包含set文件夹的目录路径**: 即上一步的输出目录的绝对路径。
-    - **输出配置文件路径**: 例如 `config/ABTest.js`。
-    - **测试类型**: 输入 `MOS`、`SMOS` 或 `AB`。
-    - **(仅 AB 模式)** **模型A和模型B的名称**: 输入文件名中对应模型的后缀（例如 `hifigan` 和 `vocos`）。
+```bash
+python3 audio/prepare_unified_audio.py --project-root . --audio-root audio
+```
 
-脚本将在指定的输出路径生成一个完整的 BeaqleJS 配置文件。AB 模式下会自动启用 `RandomizeFileOrder`，在每个测试中随机交换 A/B 的呈现顺序，避免位置偏差。
+默认映射：
 
-### 步骤四：配置测试页面
+- `reference -> audio/gt`
+- `VoxCPM_GM -> audio/VoxCPM_GM`
+- `VoxCPM_SC -> audio/VoxCPM_SC`
 
-将生成的配置文件链接到 HTML 页面。
+## 5. 生成 manifest
 
-1.  根据测试类型，打开对应的 HTML 文件：
-    - MOS 测试 → `MOS.html`
-    - SMOS 测试 → `SMOS.html`
-    - AB 偏好测试 → `ABTest.html`
-2.  找到以下代码行：
-    ```html
-    <script src="config/ABTest.js" type="text/javascript"></script>
-    ```
-3.  将其中的 `src` 属性修改为您在步骤三中生成的配置文件路径，例如：
-    ```html
-    <script src="config/my_ab_test.js" type="text/javascript"></script>
-    ```
+```bash
+python3 audio/build_audio_manifest.py \
+  --audio-root audio \
+  --output config/audio_manifest.json \
+  --reference-model gt
+```
 
-### 步骤五：部署测试系统
+输出文件：
 
-推荐使用 Docker 进行部署，方便快捷。
+- [config/audio_manifest.json](/Users/pymaster/projects/mos-test/config/audio_manifest.json)
 
-1.  确保您的系统中已安装并运行 Docker 和 Docker Compose。
-2.  进入 `tools/Docker/` 目录：
-    ```bash
-    cd tools/Docker/
-    ```
-3.  启动服务：
-    ```bash
-    docker-compose up -d
-    ```
-    该命令会以后台模式启动一个 `php:7.0-apache` 容器，并将项目根目录挂载到容器的 `/var/www/html`。
-4.  现在，您可以通过浏览器访问 `http://localhost` 或 `http://<服务器IP地址>` 来打开测试页面。
+manifest 描述：
 
-**手动部署**: 如果不使用 Docker，请将整个项目文件夹放置于支持 PHP 的 Web 服务器（如 Apache, Nginx）的网站根目录下，并确保 PHP 版本 >= 5.6。
+- 哪些模型存在
+- 哪个模型是参考模型
+- 每个 `sample_id` 对应哪些模型音频
 
-## 5. 查看测试结果
+## 6. 生成测试配置
 
--   测试者完成测试并提交后，结果将以 JSON 文件的形式保存在 `web_service/results/` 目录下。
--   **AB 偏好测试结果格式**: 每个测试项会记录 `PresentationOrder`（A/B 实际对应的模型）和 `Preference`（用户选择的偏好：A、B 或 Equal）。
--   **重要**: 如果使用仓库内 PHP 服务，请确保 Web 服务器对 `web_service/results/` 目录拥有**写入权限**。使用 `docker-compose` 部署时通常无需额外配置。如果手动部署，您可能需要执行 `chmod -R 777 web_service/results` 或配置正确的用户权限。
+### AB Preference
 
-## 6. GitHub Pages + Cloudflare R2 + D1
+```bash
+python3 audio/generate_config.py \
+  --manifest config/audio_manifest.json \
+  --output-file config/ABTest.js \
+  --test-type AB \
+  --model-a VoxCPM_GM \
+  --model-b VoxCPM_SC
+```
 
-如果您希望将网页托管在 GitHub Pages、将音频托管在 Cloudflare R2、并将结果写入 Cloudflare D1，可直接参考部署文档：
+### MOS
 
-- [`docs/github-pages-r2-d1.md`](docs/github-pages-r2-d1.md)
-- [`cloudflare/results-api/README.md`](cloudflare/results-api/README.md)
+```bash
+python3 audio/generate_config.py \
+  --manifest config/audio_manifest.json \
+  --output-file config/MOS.js \
+  --test-type MOS \
+  --models VoxCPM_GM,VoxCPM_SC
+```
 
-## 7. 致谢
+### SMOS
 
-本项目基于优秀的开源项目 [BeaqleJS](https://github.com/HSU-ANT/beaqlejs) 构建，并对其进行了功能封装和易用性改造。感谢原作者 S. Kraft 和 U. Zölzer 的杰出工作。
+```bash
+python3 audio/generate_config.py \
+  --manifest config/audio_manifest.json \
+  --output-file config/SMOS.js \
+  --test-type SMOS \
+  --models VoxCPM_GM,VoxCPM_SC \
+  --reference-model gt
+```
+
+如果音频和提交接口在远端，再补：
+
+- `--audio-root https://your-audio-host/`
+- `--submission-url https://your-submit-api/api/submissions`
+
+## 7. 页面入口
+
+- [ABTest.html](/Users/pymaster/projects/mos-test/ABTest.html)
+- [MOS.html](/Users/pymaster/projects/mos-test/MOS.html)
+- [SMOS.html](/Users/pymaster/projects/mos-test/SMOS.html)
+
+默认对应关系：
+
+- `ABTest.html -> config/ABTest.js`
+- `MOS.html -> config/MOS.js`
+- `SMOS.html -> config/SMOS.js`
+
+## 8. 部署
+
+### Docker / PHP
+
+```bash
+cd tools/Docker
+docker-compose up -d
+```
+
+### GitHub Pages + Cloudflare R2 + D1
+
+参考：
+
+- [docs/github-pages-r2-d1.md](/Users/pymaster/projects/mos-test/docs/github-pages-r2-d1.md)
+- [cloudflare/results-api/README.md](/Users/pymaster/projects/mos-test/cloudflare/results-api/README.md)
+
+### 上传音频到 R2
+
+```bash
+export R2_ACCESS_KEY_ID="..."
+export R2_SECRET_ACCESS_KEY="..."
+./tools/R2/upload_r2_audio.sh
+```
+
+该脚本默认读取 [config/audio_manifest.json](/Users/pymaster/projects/mos-test/config/audio_manifest.json)，并上传 manifest 中列出的所有模型目录。
+
+## 9. 说明
+
+- 当前推荐方案已经不再依赖 `set1/set2/...` 中间目录
+- 旧的 set 流程脚本仍保留用于兼容，但不再是主路径
