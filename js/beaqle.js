@@ -1853,17 +1853,22 @@ PrefTest.prototype.formatResults = function () {
     cell = row.insertCell(-1);
     cell.innerHTML = "Preferred Model";
 
-    // Helper: extract model name from file path
-    // e.g. "audio/ab_set/set1/sample_001_hifigan.wav" -> "hifigan"
+    // Extract the model directory from unified paths like
+    // "audio/VoxCPM_SC/2001000001.wav" -> "VoxCPM_SC".
     function extractModelName(filePath) {
-        if (!filePath) return "unknown";
-        var basename = filePath.replace(/^.*[\\\/]/, '');  // get filename
-        var nameNoExt = basename.replace(/\.[^.]+$/, '');  // remove extension
-        var lastUnderscore = nameNoExt.lastIndexOf('_');
-        if (lastUnderscore > 0) {
-            return nameNoExt.substring(lastUnderscore + 1);
+        if (!filePath) {
+            return "unknown";
         }
-        return nameNoExt;
+
+        var normalizedPath = filePath.replace(/\\/g, '/');
+        var pathParts = normalizedPath.split('/').filter(Boolean);
+
+        if (pathParts.length >= 2) {
+            return pathParts[pathParts.length - 2];
+        }
+
+        var basename = normalizedPath.replace(/^.*\//, '');
+        return basename.replace(/\.[^.]+$/, '');
     }
 
     for (var i = 0; i < this.TestConfig.Testsets.length; i++) {
@@ -1892,6 +1897,7 @@ PrefTest.prototype.formatResults = function () {
             }
 
             // Store only essential results
+            this.TestState.EvalResults[i].Runtime         = this.TestState.Runtime[i] || 0;
             this.TestState.EvalResults[i].PreferredModel  = preferredModel;
             this.TestState.EvalResults[i].PreferredFile   = preferredFile;
 
