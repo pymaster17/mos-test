@@ -8,12 +8,14 @@ AUDIO_SUFFIX_RULES = {
     "gt": "_reference",
     "VoxCPM_GM": "_generated",
     "VoxCPM_SC": "_generated",
+    "VoxCPM_SC2": "_generated",
 }
 
 DEFAULT_SOURCE_MAP = {
     "gt": "reference",
     "VoxCPM_GM": "VoxCPM_GM",
     "VoxCPM_SC": "VoxCPM_SC",
+    "VoxCPM_SC2": "VoxCPM_SC2",
 }
 
 

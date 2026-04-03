@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AB Test Groups</title>
+  <style>
+    :root {
+      --bg: #f3efe6;
+      --panel: #fffdf8;
+      --text: #1f2a2e;
+      --muted: #5e6a6f;
+      --line: #d5cbb7;
+      --accent: #0d6b6b;
+      --accent-2: #134b70;
+    }
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(19, 75, 112, 0.12), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(13, 107, 107, 0.12), transparent 30%),
+        var(--bg);
+    }
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 48px 20px 64px;
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 48px;
+      line-height: 1;
+    }
+    p {
+      margin: 0 0 28px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 12px 30px rgba(31, 42, 46, 0.06);
+    }
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+    .card p {
+      margin-bottom: 18px;
+      font-size: 16px;
+    }
+    .links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    a.button {
+      display: inline-block;
+      padding: 12px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      font-size: 15px;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>AB Test Groups</h1>
+    <p>当前有两组独立的 A/B 对比测试。每组页面会写入同一个结果接口，但测试名不同，结果可以区分。</p>
+
+    <div class="grid">
+      <section class="card">
+        <h2>VoxCPM_GM vs VoxCPM_SC</h2>
+        <p>第一组保留当前默认入口，也提供显式命名入口。</p>
+        <div class="links">
+          <a class="button" href="./ABTest.html">默认入口</a>
+          <a class="button" href="./ABTest_SC_vs_GM.html">显式入口</a>
+        </div>
+        <div class="meta">Config: <code>config/ABTest_SC_vs_GM.js</code></div>
+      </section>
+
+      <section class="card">
+        <h2>VoxCPM_SC vs VoxCPM_SC2</h2>
+        <p>第二组新增的 A/B 对比，使用独立配置和页面入口。</p>
+        <div class="links">
+          <a class="button" href="./ABTest_SC_vs_SC2.html">打开测试</a>
+        </div>
+        <div class="meta">Config: <code>config/ABTest_SC_vs_SC2.js</code></div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
