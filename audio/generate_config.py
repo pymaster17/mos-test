@@ -220,7 +220,7 @@ def parse_args() -> argparse.Namespace:
         default="config/audio_manifest.json",
         help="Path to the manifest generated from audio/<model>/<sample_id>.wav layout.",
     )
-    parser.add_argument("--output-file", help="Output config path, such as config/ABTest.js.")
+    parser.add_argument("--output-file", help="Output config path, such as config/ABTest_SC_vs_GM.js.")
     parser.add_argument("--test-type", choices=["MOS", "SMOS", "AB"], help="Test type.")
     parser.add_argument(
         "--models",

@@ -37,7 +37,9 @@ audio/
 ## 三、准备 GitHub Pages
 
 1. 推送这些文件到 GitHub 仓库：
-   - `ABTest.html`
+   - `ABTests.html`
+   - `ABTest_SC_vs_GM.html`
+   - `ABTest_SC_vs_SC2.html`
    - `MOS.html`
    - `SMOS.html`
    - `js/`
@@ -52,7 +54,7 @@ audio/
 
 发布后页面类似：
 
-- `https://<github-user>.github.io/<repo>/ABTest.html`
+- `https://<github-user>.github.io/<repo>/ABTests.html`
 
 ## 四、生成统一 manifest
 
@@ -76,10 +78,23 @@ python3 audio/build_audio_manifest.py \
 ```bash
 python3 audio/generate_config.py \
   --manifest config/audio_manifest.json \
-  --output-file config/ABTest.js \
+  --output-file config/ABTest_SC_vs_GM.js \
   --test-type AB \
   --model-a VoxCPM_GM \
   --model-b VoxCPM_SC \
+  --audio-root "https://pub-a4d493f7583e47ada8a9ff6b681a01fd.r2.dev/" \
+  --submission-url "https://mos-results-api.pymaster17.workers.dev/api/submissions"
+```
+
+第二组：
+
+```bash
+python3 audio/generate_config.py \
+  --manifest config/audio_manifest.json \
+  --output-file config/ABTest_SC_vs_SC2.js \
+  --test-type AB \
+  --model-a VoxCPM_SC \
+  --model-b VoxCPM_SC2 \
   --audio-root "https://pub-a4d493f7583e47ada8a9ff6b681a01fd.r2.dev/" \
   --submission-url "https://mos-results-api.pymaster17.workers.dev/api/submissions"
 ```

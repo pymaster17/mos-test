@@ -12,7 +12,7 @@
 
 - 单一音频结构：`audio/<model>/<sample_id>.wav`
 - 统一 manifest：`config/audio_manifest.json`
-- 按测试类型生成配置：`config/ABTest.js`、`config/MOS.js`、`config/SMOS.js`
+- 按测试类型生成配置：`config/ABTest_SC_vs_GM.js`、`config/ABTest_SC_vs_SC2.js`、`config/MOS.js`、`config/SMOS.js`
 
 ## 2. 功能特性
 
@@ -44,7 +44,8 @@ mos-test/
 │   └── decode_transcripts.py      # 可选文本处理脚本
 ├── config/
 │   ├── audio_manifest.json
-│   ├── ABTest.js
+│   ├── ABTest_SC_vs_GM.js
+│   ├── ABTest_SC_vs_SC2.js
 │   ├── MOS.js
 │   └── SMOS.js
 ├── cloudflare/results-api/
@@ -52,7 +53,9 @@ mos-test/
 ├── web_service/
 ├── css/
 ├── js/
-├── ABTest.html
+├── ABTests.html
+├── ABTest_SC_vs_GM.html
+├── ABTest_SC_vs_SC2.html
 ├── MOS.html
 └── SMOS.html
 ```
@@ -118,10 +121,21 @@ manifest 描述：
 ```bash
 python3 audio/generate_config.py \
   --manifest config/audio_manifest.json \
-  --output-file config/ABTest.js \
+  --output-file config/ABTest_SC_vs_GM.js \
   --test-type AB \
   --model-a VoxCPM_GM \
   --model-b VoxCPM_SC
+```
+
+如需生成第二组：
+
+```bash
+python3 audio/generate_config.py \
+  --manifest config/audio_manifest.json \
+  --output-file config/ABTest_SC_vs_SC2.js \
+  --test-type AB \
+  --model-a VoxCPM_SC \
+  --model-b VoxCPM_SC2
 ```
 
 ### MOS
@@ -152,13 +166,16 @@ python3 audio/generate_config.py \
 
 ## 7. 页面入口
 
-- [ABTest.html](/Users/pymaster/projects/mos-test/ABTest.html)
+- [ABTests.html](/Users/pymaster/projects/mos-test/ABTests.html)
+- [ABTest_SC_vs_GM.html](/Users/pymaster/projects/mos-test/ABTest_SC_vs_GM.html)
+- [ABTest_SC_vs_SC2.html](/Users/pymaster/projects/mos-test/ABTest_SC_vs_SC2.html)
 - [MOS.html](/Users/pymaster/projects/mos-test/MOS.html)
 - [SMOS.html](/Users/pymaster/projects/mos-test/SMOS.html)
 
 默认对应关系：
 
-- `ABTest.html -> config/ABTest.js`
+- `ABTest_SC_vs_GM.html -> config/ABTest_SC_vs_GM.js`
+- `ABTest_SC_vs_SC2.html -> config/ABTest_SC_vs_SC2.js`
 - `MOS.html -> config/MOS.js`
 - `SMOS.html -> config/SMOS.js`
 

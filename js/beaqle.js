@@ -913,7 +913,7 @@ $.extend({ alert: function (message, title) {
 
     // ###################################################################
     ListeningTest.prototype.getTestMode = function () {
-        if (window.location.pathname.includes('ABTest.html')) {
+        if (/\/ABTest(?:_[^/]+)?\.html$/.test(window.location.pathname)) {
             return 'AB';
         }
         if (window.location.pathname.includes('SMOS.html')) {

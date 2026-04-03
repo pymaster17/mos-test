@@ -7,16 +7,19 @@ Default local layout:
 - `audio/gt/<sample_id>.wav`
 - `audio/VoxCPM_GM/<sample_id>.wav`
 - `audio/VoxCPM_SC/<sample_id>.wav`
+- `audio/VoxCPM_SC2/<sample_id>.wav`
 
 Default remote layout in bucket `mos-audio`:
 
 - `audio/gt/<sample_id>.wav`
 - `audio/VoxCPM_GM/<sample_id>.wav`
 - `audio/VoxCPM_SC/<sample_id>.wav`
+- `audio/VoxCPM_SC2/<sample_id>.wav`
 
 That matches:
 
-- [config/ABTest.js](/Users/pymaster/projects/mos-test/config/ABTest.js)
+- [config/ABTest_SC_vs_GM.js](/Users/pymaster/projects/mos-test/config/ABTest_SC_vs_GM.js)
+- [config/ABTest_SC_vs_SC2.js](/Users/pymaster/projects/mos-test/config/ABTest_SC_vs_SC2.js)
 - [config/MOS.js](/Users/pymaster/projects/mos-test/config/MOS.js)
 - [config/SMOS.js](/Users/pymaster/projects/mos-test/config/SMOS.js)
 
