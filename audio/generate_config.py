@@ -143,6 +143,7 @@ def build_config(
 
     config = {
         "TestName": test_name,
+        "DisplayTestName": "AB Preference Test" if test_type == "AB" else test_name,
         "RateScalePng": "img/scale_abs.png",
         "RateScaleBgPng": "img/scale_abs_background.png",
         "RateMinValue": 0,

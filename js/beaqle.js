@@ -448,7 +448,7 @@ $.extend({ alert: function (message, title) {
         this.checkBrowserFeatures();
 
         // show introduction div
-        $('#TestTitle').html(this.TestConfig.TestName);
+        $('#TestTitle').html(this.TestConfig.DisplayTestName || this.TestConfig.TestName);
         $('#TestIntroduction').show();
         
         // setup buttons and controls
