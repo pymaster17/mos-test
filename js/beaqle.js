@@ -1689,7 +1689,7 @@ PrefTest.prototype.createTestDOM = function (TestIdx) {
         
         // 添加Equal选项的单选按钮
         cell[2] = row[1].insertCell(-1);
-        cell[2].innerHTML = "<input type='radio' name='ItemSelection' id='selectEqual'/> <span style='margin-left: 5px;'>(Euqal)</span>";
+        cell[2].innerHTML = "<input type='radio' name='ItemSelection' id='selectEqual'/> <span style='margin-left: 5px;'>(Equal)</span>";
         cell[3] = row[1].insertCell(-1);
         cell[3].innerHTML = "Please select the item which you prefer or choose Equal if you have no preference!";
         // cell[2] = row[1].insertCell(-1);
