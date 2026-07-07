@@ -65,8 +65,16 @@ def flac_duration(path: Path) -> float | None:
         return None
 
 
-def durations_under(model_dir: Path, seg_suffix: str, max_seconds: float) -> set[tuple[str, str]]:
-    """Return the (song, seg) keys whose audio under ``model_dir`` is < max_seconds."""
+def durations_in_range(
+    model_dir: Path,
+    seg_suffix: str,
+    min_seconds: float | None,
+    max_seconds: float | None,
+) -> set[tuple[str, str]]:
+    """Return the (song, seg) keys whose audio duration is in (min, max) seconds.
+
+    Bounds are exclusive; either may be None to leave that side open.
+    """
     tail = seg_suffix + AUDIO_EXT
     allowed: set[tuple[str, str]] = set()
     for song_dir in model_dir.iterdir():
@@ -76,8 +84,13 @@ def durations_under(model_dir: Path, seg_suffix: str, max_seconds: float) -> set
             if not f.is_file() or not f.name.endswith(tail):
                 continue
             dur = flac_duration(f)
-            if dur is not None and dur < max_seconds:
-                allowed.add((song_dir.name, f.name[: -len(tail)]))
+            if dur is None:
+                continue
+            if min_seconds is not None and dur <= min_seconds:
+                continue
+            if max_seconds is not None and dur >= max_seconds:
+                continue
+            allowed.add((song_dir.name, f.name[: -len(tail)]))
     return allowed
 
 
@@ -279,6 +292,13 @@ def parse_args() -> argparse.Namespace:
         "(measured on --duration-model). Omit to keep all.",
     )
     parser.add_argument(
+        "--min-duration",
+        type=float,
+        default=None,
+        help="Only keep (song, seg) whose duration is strictly above this many seconds "
+        "(measured on --duration-model). Omit for no lower bound.",
+    )
+    parser.add_argument(
         "--duration-model",
         default=None,
         help="Model dir whose audio duration gates the sample set (default: --baseline).",
@@ -314,13 +334,17 @@ def main() -> None:
     print(f"  {SCORE_DIR} (scores): {len(score_samples)} segments")
 
     allowed_keys = None
-    if args.max_duration is not None:
+    if args.max_duration is not None or args.min_duration is not None:
         dur_model = args.duration_model or args.baseline
         if dur_model not in models:
             raise SystemExit(f"duration model {dur_model!r} not among discovered models {models}")
-        allowed_keys = durations_under(root / dur_model, args.seg_suffix, args.max_duration)
+        allowed_keys = durations_in_range(
+            root / dur_model, args.seg_suffix, args.min_duration, args.max_duration
+        )
+        lo = "-inf" if args.min_duration is None else args.min_duration
+        hi = "+inf" if args.max_duration is None else args.max_duration
         print(
-            f"Duration gate: keep segments < {args.max_duration}s on {dur_model} -> "
+            f"Duration gate: keep {lo}s < dur < {hi}s on {dur_model} -> "
             f"{len(allowed_keys)}/{len(model_samples[dur_model])} kept"
         )
 

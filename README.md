@@ -192,7 +192,7 @@ python3 audio/build_vocalrender_configs.py \
 - `--r2-prefix`（默认 `cloudtest`）= 上传到 R2 后的 key 前缀；路径按段 percent-encode。
 - `--baseline`（默认 `VocalRender`）= CMOS 基准；其它模型为竞品，结果里算相对值。
 - `--max-tests-per-run`（默认 20）、`--tests ncmos,pscmos,msmos` 可选子集。
-- `--max-duration 8` = 只保留时长 `<8s` 的段（按 `--duration-model`，默认基准 VocalRender 的时长统一闸门；PS 参考与 MS 各模型都跟随同一批段），控制单题时长。省略则不筛。
+- `--max-duration 8` / `--min-duration 4` = 只保留 `4s < 时长 < 8s` 的段（边界均为开区间，按 `--duration-model`，默认基准 VocalRender 的时长统一闸门；PS 参考与 MS 各模型都跟随同一批段），控制单题时长、去掉过短/过长样本。任一省略则该侧不设限。
 
 三项测试各自的评分控件由 `js/beaqle.js` 的 `CmosTest`（N/PS，5 档 A+2…B+2，PS 多一个参考播放器）
 与 `MsMosTest`（MS，乐谱图 + 4 档 1-4）实现。结果字段：CMOS 存
