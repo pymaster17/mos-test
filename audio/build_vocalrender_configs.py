@@ -40,6 +40,47 @@ def enc_path(*parts: str) -> str:
     return "/".join(quote(part, safe="") for part in parts)
 
 
+def flac_duration(path: Path) -> float | None:
+    """Duration (seconds) read straight from the FLAC STREAMINFO header.
+
+    No decoding / no third-party deps: the first metadata block of a FLAC file
+    is STREAMINFO, whose packed tail holds the 20-bit sample rate and 36-bit
+    total sample count. Returns None if the file isn't a parseable FLAC.
+    """
+    try:
+        with open(path, "rb") as f:
+            if f.read(4) != b"fLaC":
+                return None
+            header = f.read(4)
+            if not header or (header[0] & 0x7F) != 0:  # first block must be STREAMINFO
+                return None
+            body = f.read(34)
+            if len(body) < 18:
+                return None
+            packed = int.from_bytes(body[10:18], "big")  # 20b rate | 3b ch | 5b bps | 36b samples
+            rate = (packed >> 44) & 0xFFFFF
+            total = packed & 0xFFFFFFFFF
+            return total / rate if rate else None
+    except OSError:
+        return None
+
+
+def durations_under(model_dir: Path, seg_suffix: str, max_seconds: float) -> set[tuple[str, str]]:
+    """Return the (song, seg) keys whose audio under ``model_dir`` is < max_seconds."""
+    tail = seg_suffix + AUDIO_EXT
+    allowed: set[tuple[str, str]] = set()
+    for song_dir in model_dir.iterdir():
+        if not song_dir.is_dir():
+            continue
+        for f in song_dir.iterdir():
+            if not f.is_file() or not f.name.endswith(tail):
+                continue
+            dur = flac_duration(f)
+            if dur is not None and dur < max_seconds:
+                allowed.add((song_dir.name, f.name[: -len(tail)]))
+    return allowed
+
+
 def discover_models(cloudtest_root: Path) -> list[str]:
     """Top-level model directories (everything except GT and score)."""
     models = []
@@ -138,6 +179,7 @@ def build_cmos_config(
     submission_url: str,
     max_tests_per_run: int,
     known_models: list[str],
+    allowed_keys: set | None = None,
 ) -> dict:
     cfg = base_config(
         test_name, display_name, audio_root, submission_url,
@@ -152,6 +194,8 @@ def build_cmos_config(
     for competitor in competitors:
         comp_set = model_samples[competitor]
         for song, seg in sorted(baseline_set.keys() & comp_set.keys()):
+            if allowed_keys is not None and (song, seg) not in allowed_keys:
+                continue
             if reference_samples is not None and (song, seg) not in reference_samples:
                 continue
             n += 1
@@ -184,6 +228,7 @@ def build_msmos_config(
     submission_url: str,
     max_tests_per_run: int,
     known_models: list[str],
+    allowed_keys: set | None = None,
 ) -> dict:
     cfg = base_config(
         test_name, display_name, audio_root, submission_url,
@@ -193,6 +238,8 @@ def build_msmos_config(
     n = 0
     for model in models:
         for song, seg in sorted(model_samples[model].keys() & score_samples.keys()):
+            if allowed_keys is not None and (song, seg) not in allowed_keys:
+                continue
             n += 1
             testsets.append({
                 "Name": f"{song}/{seg}",
@@ -225,6 +272,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seg-suffix", default="_generated", help="Segment filename suffix before the extension.")
     parser.add_argument("--max-tests-per-run", type=int, default=20, help="MaxTestsPerRun sampling per session.")
     parser.add_argument(
+        "--max-duration",
+        type=float,
+        default=None,
+        help="Only keep (song, seg) whose duration is strictly below this many seconds "
+        "(measured on --duration-model). Omit to keep all.",
+    )
+    parser.add_argument(
+        "--duration-model",
+        default=None,
+        help="Model dir whose audio duration gates the sample set (default: --baseline).",
+    )
+    parser.add_argument(
         "--tests",
         default="ncmos,pscmos,msmos",
         help="Comma-separated subset of {ncmos,pscmos,msmos} to generate.",
@@ -254,6 +313,17 @@ def main() -> None:
     print(f"  {REFERENCE_DIR} (reference): {len(reference_samples)} segments")
     print(f"  {SCORE_DIR} (scores): {len(score_samples)} segments")
 
+    allowed_keys = None
+    if args.max_duration is not None:
+        dur_model = args.duration_model or args.baseline
+        if dur_model not in models:
+            raise SystemExit(f"duration model {dur_model!r} not among discovered models {models}")
+        allowed_keys = durations_under(root / dur_model, args.seg_suffix, args.max_duration)
+        print(
+            f"Duration gate: keep segments < {args.max_duration}s on {dur_model} -> "
+            f"{len(allowed_keys)}/{len(model_samples[dur_model])} kept"
+        )
+
     requested = {t.strip().lower() for t in args.tests.split(",") if t.strip()}
     out_dir = Path(args.output_dir)
     common = dict(
@@ -263,6 +333,7 @@ def main() -> None:
         submission_url=args.submission_url,
         max_tests_per_run=args.max_tests_per_run,
         known_models=models,
+        allowed_keys=allowed_keys,
     )
 
     if "ncmos" in requested:
