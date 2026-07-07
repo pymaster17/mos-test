@@ -351,6 +351,15 @@ function getDateStamp() {
         pad(date.getSeconds());
 }
 
+// make a string safe to use inside a download filename (no path separators,
+// no characters that browsers/OSes reject); keep it short.
+function fileSafe(s) {
+    s = (s == null ? "" : "" + s).trim();
+    s = s.replace(/[\/\\?%*:|"<>\x00-\x1f]/g, "_").replace(/\s+/g, "_");
+    if (s.length > 40) s = s.slice(0, 40);
+    return s || "unknown";
+}
+
 // provide a virtual download to text file with a specified file name
 function saveTextAsFile(txt, fileName)
 {
@@ -446,6 +455,9 @@ $.extend({ alert: function (message, title) {
         }
 
         this.checkBrowserFeatures();
+
+        // if a previous submission never reached the server, resend it now
+        this.checkPendingSubmission();
 
         // show introduction div
         $('#TestTitle').html(this.TestConfig.DisplayTestName || this.TestConfig.TestName);
@@ -587,16 +599,20 @@ $.extend({ alert: function (message, title) {
             this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
         }
 
-        // Preload audio for the upcoming tests
-        this.preloadAllAudio();
-
         this.TestState.Ratings = Array(this.TestConfig.Testsets.length);
         this.TestState.Runtime = new Uint32Array(this.TestConfig.Testsets.length);
 //        this.TestState.Runtime.forEach(function(element, index, array){array[index] = 0});
         this.TestState.startTime = 0;
-
-        // run first test
         this.TestState.CurrentTest = 0;
+
+        // (1) offer to resume an unfinished run (restores sequence, ratings,
+        //     A/B mappings and position) before we preload / render.
+        this.restoreProgressIfAny();
+
+        // Preload audio for the (possibly resumed) test sequence
+        this.preloadAllAudio();
+
+        // run the current test (0, or the resumed position)
     	this.runTest(this.TestState.TestSequence[this.TestState.CurrentTest]);
     }
 
@@ -669,6 +685,9 @@ $.extend({ alert: function (message, title) {
         var stopTime = new Date().getTime();
         this.TestState.Runtime[this.TestState.TestSequence[this.TestState.CurrentTest]] += stopTime - this.TestState.startTime;
 
+        // (1) autosave progress after every answered item
+        this.persistProgress(false);
+
         // go to next test
         if (this.TestState.CurrentTest<this.TestState.TestSequence.length-1) {
             this.TestState.CurrentTest = this.TestState.CurrentTest+1;
@@ -676,7 +695,9 @@ $.extend({ alert: function (message, title) {
         } else {
             // if previous test was last one, ask before loading final page and then exit test
             if (confirm('This was the last test. Do you want to finish?')) {
-            
+
+                this.persistProgress(true);
+
                 $('#TableContainer').hide();
                 $('#PlayerControls').hide();
                 $('#TestControls').hide();
@@ -728,6 +749,8 @@ $.extend({ alert: function (message, title) {
             // go to previous test
             this.TestState.CurrentTest = this.TestState.CurrentTest-1;
         	this.runTest(this.TestState.TestSequence[this.TestState.CurrentTest]);
+            // (1) autosave progress after navigation
+            this.persistProgress(false);
         }
     }
 
@@ -999,47 +1022,41 @@ $.extend({ alert: function (message, title) {
             return;
         }
 
+        // (3) stash the finished payload first, so a failed submit (or a
+        //     closed tab) can still be recovered — auto-resent on next load.
+        this._savePending(payload);
+
         $('#BtnSubmitData').button('option', { icons: { primary: 'load-indicator' }, label: 'Submitting...' });
         $('#SubmitError').hide();
 
-        fetch(endpoint, {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        }).then(function(response) {
-            return response.text().then(function(text) {
-                var data = null;
-                if (text) {
-                    try {
-                        data = JSON.parse(text);
-                    } catch (error) {
-                        data = null;
-                    }
-                }
-                return {
-                    ok: response.ok,
-                    status: response.status,
-                    data: data
-                };
-            });
-        }).then(function(result) {
-            if (!result.ok || (result.data && result.data.success === false)) {
-                var backendMessage = result.data && result.data.message ? result.data.message : "Unknown submission error.";
-                throw new Error(backendMessage);
-            }
-
-            $('#SubmitBox').html("Your submission was successful.<br/><br/>");
+        this._submitWithRetry(endpoint, payload, 0).then(function(result) {
+            testHandle._clearPending();
+            testHandle._lsDel(testHandle._storeKey("progress"));
+            var receipt = (result && result.data && result.data.id) ? result.data.id : "";
+            $('#SubmitBox').html("Your submission was successful.<br/>" +
+                (receipt ? "<small>回执编号 / Receipt: " + receipt + "</small>" : "") + "<br/><br/>");
             testHandle.TestState.TestIsRunning = 0;
         }).catch(function(error) {
-            $('#SubmitError').show();
-            $('#SubmitError > #ErrorCode').html("An error occurred while submitting. Please download your results and send them manually.<br/>" + error.message);
-            $('#BtnSubmitData').button('option', { icons: { primary: 'ui-icon-alert' }, label: 'Submit' });
+            // (3) offline fallback: auto-download the exact payload as a file.
+            //     It is also kept in localStorage and auto-resent next time
+            //     this test page is opened, so the file is only a last resort.
+            //     Filename leads with the test mode so the file is identifiable:
+            //       <mode>_<YYYYMMDD-HHMMSS>_<user>.json  e.g. NCMOS_20260708-143000_alice.json
+            var fname = fileSafe(payload.test && payload.test.mode) + "_" +
+                getDateStamp() + "_" +
+                fileSafe((payload.participant && payload.participant.userName) || "results") + ".json";
             if (testHandle.browserFeatures.webAPIs['Blob']) {
+                try { saveTextAsFile(JSON.stringify(payload), fname); } catch (e) {}
                 $("#SubmitBox > .submitDownload").show();
             }
+            $('#SubmitError').show();
+            $('#SubmitError > #ErrorCode').html(
+                "在线提交失败（已重试）。结果已自动保存到本地，下次打开本测试会自动重新提交；" +
+                "如长时间无法联网，请把刚下载的结果文件发送给管理员。<br/>" +
+                "Submission failed after retries — results were saved locally and downloaded; " +
+                "they will be re-sent automatically next time you open this test.<br/>" +
+                (error && error.message ? error.message : ""));
+            $('#BtnSubmitData').button('option', { icons: { primary: 'ui-icon-alert' }, label: 'Retry submit' });
             console.error('Submission error:', error);
         });
     }
@@ -1056,10 +1073,161 @@ $.extend({ alert: function (message, title) {
         var EvalResults = this.TestState.EvalResults;        
         EvalResults.push(UserObj)
 
-        saveTextAsFile(JSON.stringify(EvalResults), getDateStamp() + "_" + UserObj.UserName + ".txt");
+        saveTextAsFile(JSON.stringify(EvalResults),
+            fileSafe(this.getTestMode()) + "_" + getDateStamp() + "_" + fileSafe(UserObj.UserName) + ".txt");
 
         this.TestState.TestIsRunning = 0;
     }
+
+    // ###################################################################
+    // -- Resilient submission & local persistence -----------------------
+    //    (1) progress autosave + resume, (2) retry with backoff,
+    //    (3) offline fallback: auto-save file + auto-resend on next load.
+
+    ListeningTest.prototype._storeKey = function (kind) {
+        var name = (this.TestConfig && this.TestConfig.TestName) || "";
+        return "beaqle:" + kind + ":" + this.getTestMode() + ":" + name;
+    };
+    ListeningTest.prototype._lsGet = function (key) {
+        try { var v = window.localStorage.getItem(key); return v ? JSON.parse(v) : null; }
+        catch (e) { return null; }
+    };
+    ListeningTest.prototype._lsSet = function (key, obj) {
+        try { window.localStorage.setItem(key, JSON.stringify(obj)); return true; }
+        catch (e) { return false; }
+    };
+    ListeningTest.prototype._lsDel = function (key) {
+        try { window.localStorage.removeItem(key); } catch (e) {}
+    };
+    ListeningTest.prototype._delay = function (ms) {
+        return new Promise(function (resolve) { setTimeout(resolve, ms); });
+    };
+
+    // -- (1) progress autosave / resume --------------------------------
+    ListeningTest.prototype.persistProgress = function (finished) {
+        if (!this.TestState || !this.TestState.TestSequence) return;
+        var seq = this.TestState.TestSequence;
+        var items = {};
+        for (var k = 0; k < seq.length; k++) {
+            var idx = seq[k];
+            var r = this.TestState.Ratings ? this.TestState.Ratings[idx] : undefined;
+            var m = this.TestState.FileMappings ? this.TestState.FileMappings[idx] : undefined;
+            var t = (this.TestState.Runtime ? this.TestState.Runtime[idx] : 0) || 0;
+            if (typeof r === 'undefined' && !m) continue;
+            items[idx] = { r: (typeof r === 'undefined' ? null : r), m: (m || null), t: t };
+        }
+        this._lsSet(this._storeKey("progress"), {
+            v: 1,
+            savedAt: new Date().toISOString(),
+            finished: !!finished,
+            current: this.TestState.CurrentTest,
+            sequence: seq.slice(0),
+            items: items,
+            user: {
+                name: $('#UserName').val() || "",
+                email: $('#UserEMail').val() || "",
+                comment: $('#UserComment').val() || ""
+            }
+        });
+    };
+
+    ListeningTest.prototype.restoreProgressIfAny = function () {
+        var snap = this._lsGet(this._storeKey("progress"));
+        if (!snap || !snap.sequence || !snap.sequence.length) return false;
+        var itemCount = 0;
+        for (var _k in snap.items) if (snap.items.hasOwnProperty(_k)) itemCount++;
+        if (itemCount === 0) return false;
+        var when = snap.savedAt ? new Date(snap.savedAt).toLocaleString() : "";
+        if (!confirm("检测到未完成的测试进度（" + when + "，已答 " + itemCount + " 题）。\n是否从上次中断处继续？\n\nResume your unfinished test from where you left off?")) {
+            this._lsDel(this._storeKey("progress"));
+            return false;
+        }
+        var len = this.TestConfig.Testsets.length;
+        this.TestState.TestSequence = snap.sequence.slice(0);
+        this.TestState.Ratings = Array(len);
+        this.TestState.FileMappings = Array(len);
+        this.TestState.Runtime = new Uint32Array(len);
+        for (var key in snap.items) {
+            if (!snap.items.hasOwnProperty(key)) continue;
+            var idx = parseInt(key, 10);
+            var it = snap.items[key];
+            if (it.r !== null && typeof it.r !== 'undefined') this.TestState.Ratings[idx] = it.r;
+            if (it.m) this.TestState.FileMappings[idx] = it.m;
+            this.TestState.Runtime[idx] = it.t || 0;
+        }
+        this.TestState.CurrentTest = (typeof snap.current === 'number' && snap.current >= 0)
+            ? Math.min(snap.current, snap.sequence.length - 1) : 0;
+        if (snap.user) {
+            if (snap.user.name) $('#UserName').val(snap.user.name);
+            if (snap.user.email) $('#UserEMail').val(snap.user.email);
+            if (snap.user.comment) $('#UserComment').val(snap.user.comment);
+        }
+        return true;
+    };
+
+    // -- (2) submit with retry + backoff -------------------------------
+    ListeningTest.prototype._submitWithRetry = function (endpoint, payload, attempt) {
+        var testHandle = this;
+        var MAX_ATTEMPTS = 3;
+        var BACKOFF_MS = [1000, 2000, 4000];
+        var retry = function () {
+            return testHandle._delay(BACKOFF_MS[attempt] || 4000)
+                .then(function () { return testHandle._submitWithRetry(endpoint, payload, attempt + 1); });
+        };
+        return fetch(endpoint, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).then(function (response) {
+            return response.text().then(function (text) {
+                var data = null;
+                if (text) { try { data = JSON.parse(text); } catch (e) { data = null; } }
+                return { ok: response.ok, status: response.status, data: data };
+            });
+        }).then(function (result) {
+            // Only count it stored if the server confirms its real contract:
+            // HTTP 2xx + {success:true} + a receipt id (the D1 row UUID).
+            // A stray 2xx from a wrong URL / proxy / HTML page has no id and
+            // is therefore NOT accepted as success -> avoids silent data loss.
+            var ok2xx = result.status >= 200 && result.status < 300;
+            var confirmed = result.data && result.data.success === true && result.data.id;
+            if (ok2xx && confirmed) return result;                          // stored, with receipt
+            // deterministic errors (4xx, or a 2xx without a valid receipt)
+            // won't fix themselves -> don't retry; only 429/5xx are retriable.
+            var retriable = (result.status === 429) || (result.status >= 500);
+            var msg = (result.data && result.data.message)
+                ? result.data.message
+                : (ok2xx ? ("Server did not confirm storage (HTTP " + result.status + ", no receipt id)")
+                         : ("HTTP " + result.status));
+            if (retriable && attempt + 1 < MAX_ATTEMPTS) return retry();
+            throw new Error(msg);
+        }, function (networkError) {
+            // fetch itself rejected => network / CORS failure, retriable
+            if (attempt + 1 < MAX_ATTEMPTS) return retry();
+            throw new Error(networkError && networkError.message ? networkError.message : "Network error");
+        });
+    };
+
+    // -- (3) pending payload persistence + auto-resend on next load ----
+    ListeningTest.prototype._savePending = function (payload) {
+        this._lsSet(this._storeKey("pending"), { savedAt: new Date().toISOString(), payload: payload });
+    };
+    ListeningTest.prototype._clearPending = function () {
+        this._lsDel(this._storeKey("pending"));
+    };
+    ListeningTest.prototype.checkPendingSubmission = function () {
+        var endpoint = (this.TestConfig && this.TestConfig.BeaqleServiceURL || "").trim();
+        if (!endpoint) return;
+        var pend = this._lsGet(this._storeKey("pending"));
+        if (!pend || !pend.payload) return;
+        var testHandle = this;
+        this._submitWithRetry(endpoint, pend.payload, 0).then(function () {
+            testHandle._clearPending();
+            testHandle._lsDel(testHandle._storeKey("progress"));
+            if ($.alert) $.alert("检测到一份此前未成功提交的结果，已自动补交成功。\nA previously unsent submission was re-sent successfully.", "已补交 / Recovered");
+        }).catch(function () { /* keep pending; try again next load */ });
+    };
 
     // ###################################################################
     // Check browser capabilities
