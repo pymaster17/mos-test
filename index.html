@@ -82,49 +82,7 @@
     <h1>Listening Tests</h1>
     <p>通用模板 + 按实验分组：每个测试是 <code>experiments/&lt;实验&gt;/&lt;name&gt;.js</code> 一个配置，页面模板通过 <code>?config=&lt;实验&gt;/&lt;name&gt;</code> 加载。新增测试只需生成一个配置并在此加一张卡片。</p>
 
-    <h2 style="margin-top:8px">实验：vocalparse</h2>
-    <div class="grid">
-      <section class="card">
-        <h2>AB · VoxCPM_GM vs VoxCPM_SC</h2>
-        <p>A/B 偏好对比。</p>
-        <div class="links">
-          <a class="button" href="./ABTest.html?config=vocalparse/SC_vs_GM">打开测试</a>
-        </div>
-        <div class="meta">Config: <code>experiments/vocalparse/SC_vs_GM.js</code></div>
-      </section>
-
-      <section class="card">
-        <h2>AB · VoxCPM_SC vs VoxCPM_SC2</h2>
-        <p>A/B 偏好对比。</p>
-        <div class="links">
-          <a class="button" href="./ABTest.html?config=vocalparse/SC_vs_SC2">打开测试</a>
-        </div>
-        <div class="meta">Config: <code>experiments/vocalparse/SC_vs_SC2.js</code></div>
-      </section>
-    </div>
-
-    <h2 style="margin-top:28px">实验：vocos</h2>
-    <div class="grid">
-      <section class="card">
-        <h2>MOS · 质量评分</h2>
-        <p>对候选音频做绝对质量评分。</p>
-        <div class="links">
-          <a class="button" href="./MOS.html?config=vocos/mos_v1">打开测试</a>
-        </div>
-        <div class="meta">Config: <code>experiments/vocos/mos_v1.js</code></div>
-      </section>
-
-      <section class="card">
-        <h2>SMOS · 相似度评分</h2>
-        <p>相对参考音频做相似度评分。</p>
-        <div class="links">
-          <a class="button" href="./SMOS.html?config=vocos/smos_v1">打开测试</a>
-        </div>
-        <div class="meta">Config: <code>experiments/vocos/smos_v1.js</code></div>
-      </section>
-    </div>
-
-    <h2 style="margin-top:28px">实验：vocalrender</h2>
+    <h2 style="margin-top:8px">实验：vocalrender</h2>
     <div class="grid">
       <section class="card">
         <h2>N-CMOS · 自然度</h2>
