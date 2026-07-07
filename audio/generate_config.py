@@ -221,7 +221,7 @@ def parse_args() -> argparse.Namespace:
         default="config/audio_manifest.json",
         help="Path to the manifest generated from audio/<model>/<sample_id>.wav layout.",
     )
-    parser.add_argument("--output-file", help="Output config path, such as config/ABTest_SC_vs_GM.js.")
+    parser.add_argument("--output-file", help="Output config path, such as experiments/vocalparse/SC_vs_GM.js.")
     parser.add_argument("--test-type", choices=["MOS", "SMOS", "AB"], help="Test type.")
     parser.add_argument(
         "--models",
@@ -258,7 +258,7 @@ def main() -> None:
     manifest = load_manifest(manifest_path)
     reference_model = get_reference_model(manifest, args.reference_model)
 
-    output_file = prompt_if_missing(args.output_file, "请输入输出配置文件路径: ")
+    output_file = prompt_if_missing(args.output_file, "请输入输出配置文件路径 (如 experiments/vocalparse/SC_vs_GM.js): ")
     test_type = prompt_if_missing(args.test_type, "请输入测试类型 (MOS / SMOS / AB): ").upper()
 
     model_a_name = args.model_a

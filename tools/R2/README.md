@@ -18,10 +18,10 @@ Default remote layout in bucket `mos-audio`:
 
 That matches:
 
-- [config/ABTest_SC_vs_GM.js](/Users/pymaster/projects/mos-test/config/ABTest_SC_vs_GM.js)
-- [config/ABTest_SC_vs_SC2.js](/Users/pymaster/projects/mos-test/config/ABTest_SC_vs_SC2.js)
-- [config/MOS.js](/Users/pymaster/projects/mos-test/config/MOS.js)
-- [config/SMOS.js](/Users/pymaster/projects/mos-test/config/SMOS.js)
+- `experiments/vocalparse/SC_vs_GM.js`
+- `experiments/vocalparse/SC_vs_SC2.js`
+- `experiments/vocos/mos_v1.js`
+- `experiments/vocos/smos_v1.js`
 
 ## Credentials
 
@@ -69,3 +69,16 @@ REMOTE_PREFIX="audio/VoxCPM_GM" \
 - In manifest mode, the script uploads every model directory declared under `models`.
 - Sample remote object:
   - `audio/VoxCPM_GM/2001000001.wav`
+
+## VocalRender experiments (cloudtest tree)
+
+The N-CMOS / PS-CMOS / MS-MOS configs are not manifest-driven. Sync the whole
+`cloudtest` directory (all model dirs + `GT` + `score`) to R2 under the same
+prefix used by `audio/build_vocalrender_configs.py --r2-prefix` (default
+`cloudtest`), keeping UTF-8 keys:
+
+```bash
+aws s3 sync /path/to/cloudtest s3://mos-audio/cloudtest \
+  --endpoint-url "https://<account-id>.r2.cloudflarestorage.com" \
+  --exclude "*.json" --exclude "*.jsonl"
+```

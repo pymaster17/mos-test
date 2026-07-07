@@ -916,6 +916,15 @@ $.extend({ alert: function (message, title) {
         if (/\/ABTest(?:_[^/]+)?\.html$/.test(window.location.pathname)) {
             return 'AB';
         }
+        if (/\/NCMOS\.html$/.test(window.location.pathname)) {
+            return 'NCMOS';
+        }
+        if (/\/PSCMOS\.html$/.test(window.location.pathname)) {
+            return 'PSCMOS';
+        }
+        if (/\/MSMOS\.html$/.test(window.location.pathname)) {
+            return 'MSMOS';
+        }
         if (window.location.pathname.includes('SMOS.html')) {
             return 'SMOS';
         }
@@ -1933,6 +1942,355 @@ PrefTest.prototype.formatResults = function () {
     resultstring += tab.outerHTML;
     return resultstring;
 }
+
+// ###################################################################
+// Shared helper: extract the model directory name from a unified path
+// like "cloudtest/VocalRender/<song>/<seg>_generated.flac" -> "VocalRender".
+// For CMOS pairs the audio file sits two levels below the model dir
+// (<model>/<song>/<seg>.flac), so we cannot rely on a fixed depth; instead
+// we return the whole path and let callers compare against known model names.
+function cmosExtractModelName(filePath, knownModels) {
+    if (!filePath) {
+        return "unknown";
+    }
+    var parts = filePath.replace(/\\/g, '/').split('/').filter(Boolean);
+    // Prefer an exact match against the configured model list (URL-decoded),
+    // which is robust regardless of how many nested directories a path has.
+    if (knownModels && knownModels.length) {
+        for (var i = 0; i < parts.length; i++) {
+            var seg = decodeURIComponent(parts[i]);
+            if (knownModels.indexOf(seg) >= 0) {
+                return seg;
+            }
+        }
+    }
+    // Fallback: the segment right after an optional prefix. Assume layout
+    // <prefix>/<model>/<song>/<seg>.<ext> -> take the 2nd-from-... heuristic.
+    if (parts.length >= 3) {
+        return decodeURIComponent(parts[parts.length - 3]);
+    }
+    if (parts.length >= 2) {
+        return decodeURIComponent(parts[parts.length - 2]);
+    }
+    return decodeURIComponent(parts[parts.length - 1] || "unknown");
+}
+
+// ###################################################################
+// Comparative MOS test (N-CMOS / PS-CMOS)
+// Pairwise A vs B on a 5-point comparative scale (A+2 .. B+2), with an
+// optional reference player (present when Testsets[i].Files.Reference exists).
+// Results are de-randomized to a signed CMOS value from the *competitor's*
+// perspective, relative to TestConfig.BaselineModel.
+
+function CmosTest(TestData) {
+    ListeningTest.apply(this, arguments);
+}
+CmosTest.prototype = new PrefTest();
+CmosTest.prototype.constructor = CmosTest;
+
+// 5-point scale definition. Labels are dimension-agnostic ("+2 = much",
+// "+1 = slightly"); the concrete meaning (natural vs. similar) is stated in
+// each page's questionnaire text.
+CmosTest.CMOS_OPTIONS = [
+    { id: "cmosA2", value: "A2", label: "A +2", gloss: "A 明显更好 / A much more" },
+    { id: "cmosA1", value: "A1", label: "A +1", gloss: "A 略微更好 / A slightly more" },
+    { id: "cmosTie", value: "Tie", label: "Tie", gloss: "相同 / Equal" },
+    { id: "cmosB1", value: "B1", label: "B +1", gloss: "B 略微更好 / B slightly more" },
+    { id: "cmosB2", value: "B2", label: "B +2", gloss: "B 明显更好 / B much more" }
+];
+
+CmosTest.prototype.createTestDOM = function (TestIdx) {
+
+    if ($('#TableContainer > table')) {
+        $('#TableContainer > table').remove();
+    }
+
+    var tab = document.createElement('table');
+    tab.setAttribute('id', 'TestTable');
+
+    var row = new Array();
+    var cell = new Array();
+
+    // random A/B presentation-order mapping (reuse PrefTest convention)
+    if (!this.TestState.FileMappings[TestIdx]) {
+        this.TestState.FileMappings[TestIdx] = { "A": "", "B": "" };
+        var RandFileNumber = Math.random();
+        if (this.TestConfig.RandomizeFileOrder && RandFileNumber > 0.5) {
+            this.TestState.FileMappings[TestIdx].A = "B";
+            this.TestState.FileMappings[TestIdx].B = "A";
+        } else {
+            this.TestState.FileMappings[TestIdx].A = "A";
+            this.TestState.FileMappings[TestIdx].B = "B";
+        }
+    }
+
+    // optional caption / transcript
+    var transcribe = this.TestConfig.Testsets[TestIdx].transcribe;
+    if (transcribe && ("" + transcribe).trim() !== "") {
+        var headRow = tab.insertRow(-1);
+        var textCell = headRow.insertCell(-1);
+        textCell.colSpan = 3;
+        textCell.innerHTML = transcribe;
+    }
+
+    var files = this.TestConfig.Testsets[TestIdx].Files;
+
+    // optional reference player (PS-CMOS)
+    if (files.hasOwnProperty("Reference")) {
+        row = tab.insertRow(-1);
+        cell[0] = row.insertCell(-1);
+        cell[0].innerHTML = "<span class='testItem'>Reference / 参考</span>";
+        cell[1] = row.insertCell(-1);
+        cell[1].innerHTML = '<button id="playReferenceBtn" class="playButton" rel="Reference">Play</button>';
+        cell[2] = row.insertCell(-1);
+        cell[2].innerHTML = "<button class='stopButton'>Stop</button>";
+        this.addAudio(TestIdx, "Reference", "Reference");
+
+        row = tab.insertRow(-1);
+        row.setAttribute("height", "5");
+    }
+
+    // A / B players
+    var fileID = this.TestState.FileMappings[TestIdx].A;
+    row = tab.insertRow(-1);
+    cell[0] = row.insertCell(-1);
+    cell[0].innerHTML = '<button id="play' + fileID + 'Btn" class="playButton" rel="' + fileID + '">A</button>';
+    this.addAudio(TestIdx, fileID, fileID);
+
+    fileID = this.TestState.FileMappings[TestIdx].B;
+    cell[1] = row.insertCell(-1);
+    cell[1].innerHTML = '<button id="play' + fileID + 'Btn" class="playButton" rel="' + fileID + '">B</button>';
+    this.addAudio(TestIdx, fileID, fileID);
+
+    cell[2] = row.insertCell(-1);
+    cell[2].innerHTML = "<button class='stopButton'>Stop</button>";
+
+    // 5-point comparative scale
+    var scaleRow = tab.insertRow(-1);
+    var scaleCell = scaleRow.insertCell(-1);
+    scaleCell.colSpan = 3;
+    var html = "<div class='cmosScale'>";
+    CmosTest.CMOS_OPTIONS.forEach(function (opt) {
+        html += "<label class='cmosOption'>" +
+            "<input type='radio' name='CmosSelection' id='" + opt.id + "' value='" + opt.value + "'/> " +
+            "<span class='cmosLabel'>" + opt.label + "</span>" +
+            "<span class='cmosGloss'>" + opt.gloss + "</span>" +
+            "</label>";
+    });
+    html += "</div>";
+    scaleCell.innerHTML = html;
+
+    row = tab.insertRow(-1);
+    row.setAttribute("height", "5");
+
+    $('#TableContainer').append(tab);
+};
+
+CmosTest.prototype.readRatings = function (TestIdx) {
+    var stored = this.TestState.Ratings[TestIdx];
+    if (typeof stored === 'undefined') return;
+    $("input[name='CmosSelection'][value='" + stored + "']").prop("checked", true);
+};
+
+CmosTest.prototype.saveRatings = function (TestIdx) {
+    var checked = $("input[name='CmosSelection']:checked").val();
+    if (typeof checked === 'undefined') {
+        $.alert
+            ? $.alert("Please choose one option before continuing.\n请先选择一个选项再继续。", "Warning!")
+            : alert("Please choose one option before continuing.\n请先选择一个选项再继续。");
+        return false;
+    }
+    this.TestState.Ratings[TestIdx] = checked;
+};
+
+CmosTest.prototype.formatResults = function () {
+    var knownModels = this.TestConfig.KnownModels || [];
+    var baselineModel = this.TestConfig.BaselineModel;
+
+    // map raw selection -> favored display position and degree
+    var SEL = {
+        "A2": { pos: "A", deg: 2 },
+        "A1": { pos: "A", deg: 1 },
+        "Tie": { pos: null, deg: 0 },
+        "B1": { pos: "B", deg: 1 },
+        "B2": { pos: "B", deg: 2 }
+    };
+
+    var resultstring = "";
+    var tab = document.createElement('table');
+    var head = tab.createTHead();
+    var hrow = head.insertRow(-1);
+    ["Test", "Competitor", "CMOS (vs " + baselineModel + ")", "time(ms)"].forEach(function (h) {
+        hrow.insertCell(-1).innerHTML = h;
+    });
+
+    for (var i = 0; i < this.TestConfig.Testsets.length; i++) {
+        this.TestState.EvalResults[i] = new Object();
+        this.TestState.EvalResults[i].TestID = this.TestConfig.Testsets[i].TestID;
+
+        if (this.TestState.TestSequence.indexOf(i) < 0) continue;
+
+        var mapping = this.TestState.FileMappings[i];
+        var files = this.TestConfig.Testsets[i].Files;
+        var raw = this.TestState.Ratings[i];
+
+        // identify baseline vs competitor original keys
+        var modelA = cmosExtractModelName(files["A"], knownModels);
+        var modelB = cmosExtractModelName(files["B"], knownModels);
+        var competitorKey = (modelA === baselineModel) ? "B" : "A";
+        var competitorModel = (competitorKey === "A") ? modelA : modelB;
+
+        // de-randomize the selection into a signed value for the competitor
+        var sel = SEL[raw] || { pos: null, deg: 0 };
+        var cmosValue = 0;
+        if (sel.deg !== 0) {
+            var favoredOriginalKey = mapping[sel.pos]; // mapping.A or mapping.B -> "A"/"B"
+            cmosValue = (favoredOriginalKey === competitorKey) ? sel.deg : -sel.deg;
+        }
+
+        var er = this.TestState.EvalResults[i];
+        er.Name = this.TestConfig.Testsets[i].Name;
+        er.BaselineModel = baselineModel;
+        er.CompetitorModel = competitorModel;
+        er.CmosValue = cmosValue;           // + => competitor better than baseline
+        er.RawSelection = raw;
+        er.PresentationOrder = "A=" + mapping.A + ",B=" + mapping.B;
+        er.HasReference = files.hasOwnProperty("Reference");
+        er.Runtime = this.TestState.Runtime[i] || 0;
+
+        var drow = tab.insertRow(-1);
+        drow.insertCell(-1).innerHTML = er.Name + " (" + this.TestConfig.Testsets[i].TestID + ")";
+        drow.insertCell(-1).innerHTML = competitorModel;
+        var cv = drow.insertCell(-1);
+        cv.style.fontWeight = "bold";
+        cv.innerHTML = (cmosValue > 0 ? "+" : "") + cmosValue;
+        drow.insertCell(-1).innerHTML = er.Runtime;
+    }
+    resultstring += tab.outerHTML;
+    return resultstring;
+};
+
+// ###################################################################
+// Music-score consistency MOS test (MS-MOS)
+// One audio item + a music-score image, rated on a 4-point absolute scale.
+
+function MsMosTest(TestData) {
+    ListeningTest.apply(this, arguments);
+}
+MsMosTest.prototype = new ListeningTest();
+MsMosTest.prototype.constructor = MsMosTest;
+
+MsMosTest.MSMOS_OPTIONS = [
+    { value: 1, label: "1", gloss: "Unable to follow / 完全不符" },
+    { value: 2, label: "2", gloss: "Hardly follow / 几乎不符" },
+    { value: 3, label: "3", gloss: "Roughly follow / 大致符合" },
+    { value: 4, label: "4", gloss: "Strictly follow / 完全符合" }
+];
+
+MsMosTest.prototype.createTestDOM = function (TestIdx) {
+
+    if ($('#TableContainer > table')) {
+        $('#TableContainer > table').remove();
+    }
+
+    var tab = document.createElement('table');
+    tab.setAttribute('id', 'TestTable');
+
+    var testset = this.TestConfig.Testsets[TestIdx];
+
+    // music score image
+    if (testset.Image) {
+        var imgRow = tab.insertRow(-1);
+        var imgCell = imgRow.insertCell(-1);
+        imgCell.colSpan = 3;
+        imgCell.innerHTML = "<img id='ScoreImage' src='" + this.TestConfig.AudioRoot + testset.Image +
+            "' alt='music score' style='display:block;margin:10px auto;max-width:100%;'/>";
+    }
+
+    // single audio player
+    var row = tab.insertRow(-1);
+    var cell0 = row.insertCell(-1);
+    cell0.innerHTML = "<span class='testItem'>Sample / 音频</span>";
+    var cell1 = row.insertCell(-1);
+    cell1.innerHTML = '<button id="play1Btn" class="playButton" rel="1">Play</button>';
+    var cell2 = row.insertCell(-1);
+    cell2.innerHTML = "<button class='stopButton'>Stop</button>";
+    this.addAudio(TestIdx, "1", "1");
+
+    // 4-point absolute scale
+    var scaleRow = tab.insertRow(-1);
+    var scaleCell = scaleRow.insertCell(-1);
+    scaleCell.colSpan = 3;
+    var html = "<div class='cmosScale'>";
+    MsMosTest.MSMOS_OPTIONS.forEach(function (opt) {
+        html += "<label class='cmosOption'>" +
+            "<input type='radio' name='MsMosSelection' id='msmos" + opt.value + "' value='" + opt.value + "'/> " +
+            "<span class='cmosLabel'>" + opt.label + "</span>" +
+            "<span class='cmosGloss'>" + opt.gloss + "</span>" +
+            "</label>";
+    });
+    html += "</div>";
+    scaleCell.innerHTML = html;
+
+    row = tab.insertRow(-1);
+    row.setAttribute("height", "5");
+
+    $('#TableContainer').append(tab);
+};
+
+MsMosTest.prototype.readRatings = function (TestIdx) {
+    var stored = this.TestState.Ratings[TestIdx];
+    if (typeof stored === 'undefined') return;
+    $("input[name='MsMosSelection'][value='" + stored + "']").prop("checked", true);
+};
+
+MsMosTest.prototype.saveRatings = function (TestIdx) {
+    var checked = $("input[name='MsMosSelection']:checked").val();
+    if (typeof checked === 'undefined') {
+        $.alert
+            ? $.alert("Please choose a score before continuing.\n请先选择一个评分再继续。", "Warning!")
+            : alert("Please choose a score before continuing.\n请先选择一个评分再继续。");
+        return false;
+    }
+    this.TestState.Ratings[TestIdx] = parseInt(checked, 10);
+};
+
+MsMosTest.prototype.formatResults = function () {
+    var knownModels = this.TestConfig.KnownModels || [];
+    var resultstring = "";
+    var tab = document.createElement('table');
+    var head = tab.createTHead();
+    var hrow = head.insertRow(-1);
+    ["Test", "Model", "MS-MOS", "time(ms)"].forEach(function (h) {
+        hrow.insertCell(-1).innerHTML = h;
+    });
+
+    for (var i = 0; i < this.TestConfig.Testsets.length; i++) {
+        this.TestState.EvalResults[i] = new Object();
+        this.TestState.EvalResults[i].TestID = this.TestConfig.Testsets[i].TestID;
+
+        if (this.TestState.TestSequence.indexOf(i) < 0) continue;
+
+        var files = this.TestConfig.Testsets[i].Files;
+        var er = this.TestState.EvalResults[i];
+        er.Name = this.TestConfig.Testsets[i].Name;
+        er.Model = cmosExtractModelName(files["1"], knownModels);
+        er.MsMosScore = this.TestState.Ratings[i];
+        er.AudioFile = files["1"];
+        er.Image = this.TestConfig.Testsets[i].Image || "";
+        er.Runtime = this.TestState.Runtime[i] || 0;
+
+        var drow = tab.insertRow(-1);
+        drow.insertCell(-1).innerHTML = er.Name + " (" + this.TestConfig.Testsets[i].TestID + ")";
+        drow.insertCell(-1).innerHTML = er.Model;
+        var sc = drow.insertCell(-1);
+        sc.style.fontWeight = "bold";
+        sc.innerHTML = er.MsMosScore;
+        drow.insertCell(-1).innerHTML = er.Runtime;
+    }
+    resultstring += tab.outerHTML;
+    return resultstring;
+};
 
 // ###################################################################
 // MOS test main object

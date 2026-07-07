@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Listening Tests</title>
+  <style>
+    :root {
+      --bg: #f3efe6;
+      --panel: #fffdf8;
+      --text: #1f2a2e;
+      --muted: #5e6a6f;
+      --line: #d5cbb7;
+      --accent: #0d6b6b;
+      --accent-2: #134b70;
+    }
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(19, 75, 112, 0.12), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(13, 107, 107, 0.12), transparent 30%),
+        var(--bg);
+    }
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 48px 20px 64px;
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 48px;
+      line-height: 1;
+    }
+    p {
+      margin: 0 0 28px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 12px 30px rgba(31, 42, 46, 0.06);
+    }
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+    .card p {
+      margin-bottom: 18px;
+      font-size: 16px;
+    }
+    .links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    a.button {
+      display: inline-block;
+      padding: 12px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      font-size: 15px;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Listening Tests</h1>
+    <p>通用模板 + 按实验分组：每个测试是 <code>experiments/&lt;实验&gt;/&lt;name&gt;.js</code> 一个配置，页面模板通过 <code>?config=&lt;实验&gt;/&lt;name&gt;</code> 加载。新增测试只需生成一个配置并在此加一张卡片。</p>
+
+    <h2 style="margin-top:8px">实验：vocalparse</h2>
+    <div class="grid">
+      <section class="card">
+        <h2>AB · VoxCPM_GM vs VoxCPM_SC</h2>
+        <p>A/B 偏好对比。</p>
+        <div class="links">
+          <a class="button" href="./ABTest.html?config=vocalparse/SC_vs_GM">打开测试</a>
+        </div>
+        <div class="meta">Config: <code>experiments/vocalparse/SC_vs_GM.js</code></div>
+      </section>
+
+      <section class="card">
+        <h2>AB · VoxCPM_SC vs VoxCPM_SC2</h2>
+        <p>A/B 偏好对比。</p>
+        <div class="links">
+          <a class="button" href="./ABTest.html?config=vocalparse/SC_vs_SC2">打开测试</a>
+        </div>
+        <div class="meta">Config: <code>experiments/vocalparse/SC_vs_SC2.js</code></div>
+      </section>
+    </div>
+
+    <h2 style="margin-top:28px">实验：vocos</h2>
+    <div class="grid">
+      <section class="card">
+        <h2>MOS · 质量评分</h2>
+        <p>对候选音频做绝对质量评分。</p>
+        <div class="links">
+          <a class="button" href="./MOS.html?config=vocos/mos_v1">打开测试</a>
+        </div>
+        <div class="meta">Config: <code>experiments/vocos/mos_v1.js</code></div>
+      </section>
+
+      <section class="card">
+        <h2>SMOS · 相似度评分</h2>
+        <p>相对参考音频做相似度评分。</p>
+        <div class="links">
+          <a class="button" href="./SMOS.html?config=vocos/smos_v1">打开测试</a>
+        </div>
+        <div class="meta">Config: <code>experiments/vocos/smos_v1.js</code></div>
+      </section>
+    </div>
+
+    <h2 style="margin-top:28px">实验：vocalrender</h2>
+    <div class="grid">
+      <section class="card">
+        <h2>N-CMOS · 自然度</h2>
+        <p>成对比较相对自然度，VocalRender 为基准 vs 其它 5 个模型，5 档（A+2…B+2）。</p>
+        <div class="links">
+          <a class="button" href="./NCMOS.html?config=vocalrender/n_cmos">打开测试</a>
+        </div>
+        <div class="meta">Config: <code>experiments/vocalrender/n_cmos.js</code></div>
+      </section>
+
+      <section class="card">
+        <h2>PS-CMOS · 韵律相似度</h2>
+        <p>提供 GT 参考，成对比较韵律相似度，5 档（A+2…B+2）。</p>
+        <div class="links">
+          <a class="button" href="./PSCMOS.html?config=vocalrender/ps_cmos">打开测试</a>
+        </div>
+        <div class="meta">Config: <code>experiments/vocalrender/ps_cmos.js</code></div>
+      </section>
+
+      <section class="card">
+        <h2>MS-MOS · 乐谱一致性</h2>
+        <p>乐谱图片 + 单条音频，绝对评分 1-4，覆盖全部 6 个模型。</p>
+        <div class="links">
+          <a class="button" href="./MSMOS.html?config=vocalrender/ms_mos">打开测试</a>
+        </div>
+        <div class="meta">Config: <code>experiments/vocalrender/ms_mos.js</code></div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

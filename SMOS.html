@@ -13,10 +13,20 @@
 
     <title>BeaqleJS</title>
     
-    <!-- load the test config file -->
-        <script src="config/SMOS.js?v=20260403-1" type="text/javascript"></script>
-    <!---->
-    
+    <!-- load the per-experiment test config via ?config=<exp>/<name> -> experiments/<exp>/<name>.js
+         Falls back to DEFAULT_CONFIG when the parameter is missing or invalid.
+         Dots are disallowed in the name, so no ".." path traversal is possible. -->
+    <script type="text/javascript">
+    /* <![CDATA[ */
+        (function () {
+            var DEFAULT_CONFIG = "vocos/smos_v1";
+            var requested = new URLSearchParams(window.location.search).get("config");
+            var name = (requested && /^[A-Za-z0-9_/-]+$/.test(requested)) ? requested : DEFAULT_CONFIG;
+            document.write('<scr' + 'ipt src="experiments/' + name + '.js?v=20260707-1" type="text/javascript"><\/scr' + 'ipt>');
+        })();
+    /* ]]> */
+    </script>
+
     <link type="text/css" href="css/smoothness/jquery-ui-1.8.18.custom.css" rel="Stylesheet" />
     <link type="text/css" href="css/styles.css" rel="Stylesheet" />
 

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+
+    <!--
+    BeaqleJS - HTML5 and JavaScript framework for listening tests, <https://github.com/HSU-ANT/beaqlejs>
+
+    This file and all corresponding parts of BeaqleJS are published under the GPLv3 license, <http://www.gnu.org/licenses/>
+    -->
+
+
+    <title>Prosody Similarity CMOS Test</title>
+
+    <!-- load the per-experiment test config via ?config=<exp>/<name> -> experiments/<exp>/<name>.js
+         Falls back to DEFAULT_CONFIG when the parameter is missing or invalid.
+         Dots are disallowed in the name, so no ".." path traversal is possible. -->
+    <script type="text/javascript">
+    /* <![CDATA[ */
+        (function () {
+            var DEFAULT_CONFIG = "vocalrender/ps_cmos";
+            var requested = new URLSearchParams(window.location.search).get("config");
+            var name = (requested && /^[A-Za-z0-9_/-]+$/.test(requested)) ? requested : DEFAULT_CONFIG;
+            document.write('<scr' + 'ipt src="experiments/' + name + '.js?v=20260707-1" type="text/javascript"><\/scr' + 'ipt>');
+        })();
+    /* ]]> */
+    </script>
+
+    <link type="text/css" href="css/smoothness/jquery-ui-1.8.18.custom.css" rel="Stylesheet" />
+    <link type="text/css" href="css/styles.css" rel="Stylesheet" />
+
+    <script src="js/jquery.js" type="text/javascript"></script>
+    <script src="js/jquery-ui.custom.min.js" type="text/javascript" ></script>
+    <script src="js/beaqle.js?v=20260707-1" type="text/javascript"></script>
+
+
+    <script type="text/javascript">
+    /* <![CDATA[ */
+        var testHandle;
+        window.onload=function() {
+
+            testHandle = new CmosTest(TestConfig);   // <-- Comparative MOS (PS-CMOS, with reference)
+            $('#Footer').prepend(testHandle.browserFeatureString() + '<br/>');
+        };
+
+        function validateAndSubmit() {
+            if ($('#UserName').val().trim() === '') {
+                alert('Username is required! \n用户名是必填项！');
+                return false;
+            }
+            testHandle.SubmitTestResults();
+        }
+    /* ]]> */
+    </script>
+
+</head>
+
+<body>
+
+<div id="Wrapper">
+
+    <div id="TestTitle" class="commonBox">
+        Loading...
+    </div>
+
+    <div id="LoadOverlay" class="commonBox">
+        <img src="img/ajax-loader.gif"/> &nbsp;&nbsp;&nbsp; Loading...
+    </div>
+
+    <div id="TestIntroduction" class="commonBox">
+
+        <div style="text-align:left">
+            Thanks for participating in this <b>Prosody Similarity (PS-CMOS)</b> listening test. It will take roughly 10-15 minutes. Please use good headphones.
+            <br />
+            <br />
+            <b>Question:</b> First listen to the <b>Reference</b> singing. Then, <u>ignoring vocal characteristics (timbre, style, vocal techniques)</u>, decide which singing's <b>prosody (rhythm, melody)</b> is more consistent and identical with the reference.
+            <ul>
+                <li>Each test provides a Reference plus two singing samples, A and B.</li>
+                <li>Compare prosody similarity to the reference and choose one option on the 5-point scale.</li>
+                <li><b>A +2</b> = A is much more similar, <b>A +1</b> = A is slightly more similar, <b>Tie</b> = equally similar, <b>B +1</b> / <b>B +2</b> = B is slightly / much more similar.</li>
+            </ul>
+        </div>
+        <div style="text-align:left">
+            感谢您参加本次<b>韵律相似度（PS-CMOS）</b>听力测试，约需 10-15 分钟。请使用高质量耳机。
+            <br />
+            <br />
+            <b>问题：</b>请先听<b>参考（Reference）</b>演唱。然后<u>忽略音色、风格、演唱技巧等嗓音特征</u>，判断哪一个演唱的<b>韵律（节奏、旋律）</b>与参考更一致、更接近。
+            <ul>
+                <li>每道题提供一个参考音频，以及两个演唱样本 A 和 B。</li>
+                <li>比较它们与参考在韵律上的相似度，在 5 档量表中选择一项。</li>
+                <li><b>A +2</b>＝A 明显更相似，<b>A +1</b>＝A 略微更相似，<b>Tie</b>＝一样相似，<b>B +1</b> / <b>B +2</b>＝B 略微 / 明显更相似。</li>
+            </ul>
+        </div>
+
+        <br />
+        <br />
+
+        <button id="BtnStartTest" onclick="testHandle.startTests();">Start!</button>
+    </div>
+
+    <div id="TestEnd" class="commonBox">
+
+        Thank you very much!
+        <br />
+        <br />
+
+        <div id="SubmitBox">
+            <div id="SubmitError" class="error">
+                We are sorry, but the following error occured during your submission:
+                <p id="ErrorCode"></p>
+            </div>
+            <p class="submitOnline">
+                Please submit the results to our server. <span style="color:red">Entering a name is mandatory.</span> You can also leave a comment.
+                <br />
+                请将结果提交到我们的服务器。 <span style="color:red">用户名为必填项。</span> 您也可以留下评论。
+            </p>
+            <p class="submitDownload">
+                Please download and save the results. Entering a name or email address is not mandatory
+                but it would help us to contact you if we have further questions. You can also leave a comment.
+            </p>
+            <table border=0 style="margin-left: auto;margin-right: auto;">
+            <tr><td>Name:</td><td><input id="UserName" type="text" size="40" maxlength="40" /> 随便填一个你觉得不会和别人重复的名字</td></tr>
+            <tr><td>Email:</td><td><input id="UserEMail" type="text" size="40" maxlength="40" /></td></tr>
+            <tr><td></td><td><textarea id="UserComment" cols="40" rows="4">Your comment...</textarea></td></tr>
+            </table>
+            <br />
+            <button id="BtnSubmitData" class="submitOnline" onclick="validateAndSubmit();">Submit</button>
+            <button id="BtnDownloadData" class="submitDownload" onclick="testHandle.DownloadTestResults();">Download</button>
+            <p class="submitEmail error">
+                Results should be send to <span class="supervisorEmail"></span>
+            </p>
+        </div>
+
+        <div id="ResultsBox">
+        </div>
+    </div>
+
+    <div id="TableContainer" class="commonBox">
+        <div id="TestHeading">
+        </div>
+    </div>
+
+    <div id="TestControls" class="commonBox">
+        <button id="BtnNextTest">Next Test</>
+        <button id="BtnPrevTest">Previous Test</>
+    </div>
+
+    <div id="PlayerControls" class="commonBox">
+
+        <div id="duration">
+            <span>00:00</span>
+        </div>
+
+        <div id="TimeLine">
+            <div id="ProgressBar"></div>
+            <div id="ABRange"></div>
+        </div>
+
+        <div>
+            <input id="ChkLoopAudio" type="checkbox" value="Loop" /><label for="ChkLoopAudio">Loop</label>
+            <input id="ChkAutoReturn" type="checkbox" value="Auto Return" /><label for="ChkAutoReturn">Auto Return</label>
+        </div>
+
+        <div id="Volume">
+            Volume
+            <div id="VolumeSlider"></div>
+        </div>
+
+        <br style="clear:both"/>
+
+    </div>
+
+    <div id="Footer">
+        This listening test has been created with <a href="https://github.com/HSU-ANT/beaqlejs" target="_blank">BeaqleJS</a> <a href="https://github.com/HSU-ANT/beaqlejs/tree/master" target="_blank">master</a>.
+    </div>
+</div>
+
+</body>
+
+</html>

@@ -37,15 +37,18 @@ audio/
 ## 三、准备 GitHub Pages
 
 1. 推送这些文件到 GitHub 仓库：
-   - `ABTests.html`
-   - `ABTest_SC_vs_GM.html`
-   - `ABTest_SC_vs_SC2.html`
+   - `index.html`
+   - `ABTest.html`
    - `MOS.html`
    - `SMOS.html`
+   - `NCMOS.html`
+   - `PSCMOS.html`
+   - `MSMOS.html`
    - `js/`
    - `css/`
    - `img/`
    - `config/`
+   - `experiments/`
    - `.nojekyll`
 2. 打开仓库 `Settings -> Pages`
 3. 选择 `Deploy from a branch`
@@ -54,7 +57,7 @@ audio/
 
 发布后页面类似：
 
-- `https://<github-user>.github.io/<repo>/ABTests.html`
+- `https://<github-user>.github.io/<repo>/index.html`
 
 ## 四、生成统一 manifest
 
@@ -78,7 +81,7 @@ python3 audio/build_audio_manifest.py \
 ```bash
 python3 audio/generate_config.py \
   --manifest config/audio_manifest.json \
-  --output-file config/ABTest_SC_vs_GM.js \
+  --output-file experiments/vocalparse/SC_vs_GM.js \
   --test-type AB \
   --model-a VoxCPM_GM \
   --model-b VoxCPM_SC \
@@ -91,7 +94,7 @@ python3 audio/generate_config.py \
 ```bash
 python3 audio/generate_config.py \
   --manifest config/audio_manifest.json \
-  --output-file config/ABTest_SC_vs_SC2.js \
+  --output-file experiments/vocalparse/SC_vs_SC2.js \
   --test-type AB \
   --model-a VoxCPM_SC \
   --model-b VoxCPM_SC2 \
@@ -104,7 +107,7 @@ python3 audio/generate_config.py \
 ```bash
 python3 audio/generate_config.py \
   --manifest config/audio_manifest.json \
-  --output-file config/MOS.js \
+  --output-file experiments/vocos/mos_v1.js \
   --test-type MOS \
   --models VoxCPM_GM,VoxCPM_SC \
   --audio-root "https://pub-a4d493f7583e47ada8a9ff6b681a01fd.r2.dev/" \
@@ -116,7 +119,7 @@ python3 audio/generate_config.py \
 ```bash
 python3 audio/generate_config.py \
   --manifest config/audio_manifest.json \
-  --output-file config/SMOS.js \
+  --output-file experiments/vocos/smos_v1.js \
   --test-type SMOS \
   --models VoxCPM_GM,VoxCPM_SC \
   --reference-model gt \
@@ -128,6 +131,19 @@ python3 audio/generate_config.py \
 
 - `AudioRoot` 填到域名根
 - 配置内每条音频路径本身已经带 `audio/...`
+
+### VocalRender 三项实验（N-CMOS / PS-CMOS / MS-MOS）
+
+数据布局不同（`<Model>/<歌>/<seg>_generated.flac` + `score/<歌>/<seg>_score.png`），用专用生成器：
+
+```bash
+python3 audio/build_vocalrender_configs.py \
+  --cloudtest-root /path/to/cloudtest \
+  --audio-root "https://pub-a4d493f7583e47ada8a9ff6b681a01fd.r2.dev/" \
+  --submission-url "https://mos-results-api.pymaster17.workers.dev/api/submissions"
+```
+
+产出 `experiments/vocalrender/{n_cmos,ps_cmos,ms_mos}.js`；路径按段 percent-encode（歌名含中文/空格）。
 
 ## 六、上传音频到 R2
 
@@ -147,6 +163,15 @@ export R2_SECRET_ACCESS_KEY="..."
 audio/gt/2001000001.wav
 audio/VoxCPM_GM/2001000001.wav
 audio/VoxCPM_SC/2001000001.wav
+```
+
+VocalRender 实验的数据不走 manifest，把整个 `cloudtest`（各模型 + `GT` + `score`）同步到
+R2，前缀与生成器 `--r2-prefix`（默认 `cloudtest`）一致、key 保持 UTF-8 原样：
+
+```bash
+aws s3 sync /path/to/cloudtest s3://mos-audio/cloudtest \
+  --endpoint-url "https://<account-id>.r2.cloudflarestorage.com" \
+  --exclude "*.json" --exclude "*.jsonl"
 ```
 
 ## 七、R2 CORS
