@@ -2375,6 +2375,22 @@ MsMosTest.prototype.createTestDOM = function (TestIdx) {
             "' alt='music score' style='display:block;margin:10px auto;max-width:100%;'/>";
     }
 
+    // optional reference-melody player (lilypond render of the score);
+    // helps the listener imagine the intended melody before judging the sample
+    if (testset.Files.hasOwnProperty("Reference")) {
+        var refRow = tab.insertRow(-1);
+        var refc0 = refRow.insertCell(-1);
+        refc0.innerHTML = "<span class='testItem'>Score melody / 乐谱旋律</span>";
+        var refc1 = refRow.insertCell(-1);
+        refc1.innerHTML = '<button id="playReferenceBtn" class="playButton" rel="Reference">Play</button>';
+        var refc2 = refRow.insertCell(-1);
+        refc2.innerHTML = "<button class='stopButton'>Stop</button>";
+        this.addAudio(TestIdx, "Reference", "Reference");
+
+        var spacer = tab.insertRow(-1);
+        spacer.setAttribute("height", "5");
+    }
+
     // single audio player
     var row = tab.insertRow(-1);
     var cell0 = row.insertCell(-1);
@@ -2445,6 +2461,7 @@ MsMosTest.prototype.formatResults = function () {
         er.Model = cmosExtractModelName(files["1"], knownModels);
         er.MsMosScore = this.TestState.Ratings[i];
         er.AudioFile = files["1"];
+        er.ReferenceFile = files.Reference || "";
         er.Image = this.TestConfig.Testsets[i].Image || "";
         er.Runtime = this.TestState.Runtime[i] || 0;
 
