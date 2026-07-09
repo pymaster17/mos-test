@@ -1009,6 +1009,13 @@ $.extend({ alert: function (message, title) {
     // ###################################################################
     // submit test results to server
     ListeningTest.prototype.SubmitTestResults = function () {
+        // (0) prevent duplicate submission of the same finished test: a rapid
+        //     double-click, or a second click while the request is still in
+        //     flight, must not create two identical rows on the server. The
+        //     flag stays set on success (the box is replaced with a receipt);
+        //     it is cleared only on failure so the user can retry.
+        if (this._isSubmitting) return;
+
         var endpoint = (this.TestConfig.BeaqleServiceURL || "").trim();
         var payload = this.buildSubmissionPayload();
         var testHandle = this;
@@ -1026,6 +1033,8 @@ $.extend({ alert: function (message, title) {
         //     closed tab) can still be recovered — auto-resent on next load.
         this._savePending(payload);
 
+        this._isSubmitting = true;
+        $('#BtnSubmitData').button('disable');
         $('#BtnSubmitData').button('option', { icons: { primary: 'load-indicator' }, label: 'Submitting...' });
         $('#SubmitError').hide();
 
@@ -1056,6 +1065,9 @@ $.extend({ alert: function (message, title) {
                 "Submission failed after retries — results were saved locally and downloaded; " +
                 "they will be re-sent automatically next time you open this test.<br/>" +
                 (error && error.message ? error.message : ""));
+            // allow a manual retry: clear the in-flight guard and re-enable.
+            testHandle._isSubmitting = false;
+            $('#BtnSubmitData').button('enable');
             $('#BtnSubmitData').button('option', { icons: { primary: 'ui-icon-alert' }, label: 'Retry submit' });
             console.error('Submission error:', error);
         });
