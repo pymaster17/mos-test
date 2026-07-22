@@ -768,8 +768,9 @@ $.extend({ alert: function (message, title) {
 
         this.createTestDOM(TestIdx);
 
-        // set current test name
-        $('#TestHeading').html(this.TestConfig.Testsets[TestIdx].Name + " (" + (this.TestState.CurrentTest+1) + " of " + this.TestState.TestSequence.length + ")");
+        // show only a running position, never the song/singer name, to avoid
+        // leaking which song is under test (which could bias the listener).
+        $('#TestHeading').html("样本 / Sample " + (this.TestState.CurrentTest+1) + " / " + this.TestState.TestSequence.length);
         $('#TestHeading').show();
 
         // hide everything instead of load animation
@@ -2300,10 +2301,11 @@ CmosTest.prototype.formatResults = function () {
     var tab = document.createElement('table');
     var head = tab.createTHead();
     var hrow = head.insertRow(-1);
-    ["Test", "Competitor", "CMOS (vs " + baselineModel + ")", "time(ms)"].forEach(function (h) {
+    ["样本 / Sample", "Competitor", "CMOS (vs " + baselineModel + ")", "time(ms)"].forEach(function (h) {
         hrow.insertCell(-1).innerHTML = h;
     });
 
+    var rowNo = 0;   // running index shown to the listener (never the song name)
     for (var i = 0; i < this.TestConfig.Testsets.length; i++) {
         this.TestState.EvalResults[i] = new Object();
         this.TestState.EvalResults[i].TestID = this.TestConfig.Testsets[i].TestID;
@@ -2339,7 +2341,7 @@ CmosTest.prototype.formatResults = function () {
         er.Runtime = this.TestState.Runtime[i] || 0;
 
         var drow = tab.insertRow(-1);
-        drow.insertCell(-1).innerHTML = er.Name + " (" + this.TestConfig.Testsets[i].TestID + ")";
+        drow.insertCell(-1).innerHTML = (++rowNo);   // Name is stored, not shown
         drow.insertCell(-1).innerHTML = competitorModel;
         var cv = drow.insertCell(-1);
         cv.style.fontWeight = "bold";
@@ -2457,10 +2459,11 @@ MsMosTest.prototype.formatResults = function () {
     var tab = document.createElement('table');
     var head = tab.createTHead();
     var hrow = head.insertRow(-1);
-    ["Test", "Model", "MS-MOS", "time(ms)"].forEach(function (h) {
+    ["样本 / Sample", "Model", "MS-MOS", "time(ms)"].forEach(function (h) {
         hrow.insertCell(-1).innerHTML = h;
     });
 
+    var rowNo = 0;   // running index shown to the listener (never the song name)
     for (var i = 0; i < this.TestConfig.Testsets.length; i++) {
         this.TestState.EvalResults[i] = new Object();
         this.TestState.EvalResults[i].TestID = this.TestConfig.Testsets[i].TestID;
@@ -2478,7 +2481,7 @@ MsMosTest.prototype.formatResults = function () {
         er.Runtime = this.TestState.Runtime[i] || 0;
 
         var drow = tab.insertRow(-1);
-        drow.insertCell(-1).innerHTML = er.Name + " (" + this.TestConfig.Testsets[i].TestID + ")";
+        drow.insertCell(-1).innerHTML = (++rowNo);   // Name is stored, not shown
         drow.insertCell(-1).innerHTML = er.Model;
         var sc = drow.insertCell(-1);
         sc.style.fontWeight = "bold";
